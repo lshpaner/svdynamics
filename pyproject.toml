@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "support-vector-dynamics"
+version = "0.0.0a0"
+description = "Support Vector Dynamics: mixed (composite) kernels for scikit-learn SVMs."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Leonid Shpaner" }
+]
+dependencies = [
+  "numpy>=1.21",
+  "scikit-learn>=1.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/yourname/support-vector-dynamics"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
