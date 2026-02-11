@@ -2,9 +2,26 @@
 
 Support Vector Dynamics is a small library that adds first-class mixed (composite) kernels to scikit-learn SVMs.
 
-## Install (editable)
+## Prerequisites
+
+Before you install `svdynamics`, ensure your system meets the following requirements:
+
+- `Python`: Version `3.8` or higher.
+
+
+Additionally, `svdynamics` depends on the following packages, which will be automatically installed:
+
+- `numpy`: version `1.21` or higher
+- `scikit-learn`: version `1.0` or higher
+
+
+## 💾 Installation
+
+To install `svdynamics`, simply run the following command in your terminal:
+
+
 ```bash
-pip install -e .
+pip install svdynamics
 ```
 
 ## Quick Start
@@ -35,8 +52,15 @@ print(proba)
 print(pred)
 ```
 
-## Notes
+## 📄 Official Documentation
 
-- This library delegates training to scikit-learn's SVC/SVR.
-- Kernel weights are fixed in v0.0.0a0.
-- No GPU support yet.
+https://lshpaner.github.io/svdynamics
+
+
+## 🌐 Authors' Website
+
+1. [Leon Shpaner](https://www.leonshpaner.com)
+
+## ⚖️ License
+
+`svdynamics` is distributed under the MIT License. See [LICENSE](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md) for more information.
