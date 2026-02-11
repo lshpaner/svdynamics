@@ -1,8 +1,4 @@
-<br>
-
 <img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg?token=GHSAT0AAAAAADU4WLUYIXXPGFLDSJ3CBZ5K2MMYYEQ" height="250" style="border: none; outline: none; box-shadow: none;" oncontextmenu="return false;">
-
-<br> 
 
 Support Vector Dynamics is a small library that adds first-class mixed (composite) kernels to scikit-learn SVMs.
 
