@@ -10,7 +10,7 @@ from sklearn.metrics import (
     classification_report,
 )
 
-from support_vector_dynamics import CompositeKernel, SVDClassifier
+from svdynamics import CompositeKernel, SVDClassifier
 
 
 X, y = make_classification(
