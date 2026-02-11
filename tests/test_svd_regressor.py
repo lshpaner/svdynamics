@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.datasets import make_regression
-from support_vector_dynamics import CompositeKernel, SVDRegressor
+from svdynamics import CompositeKernel, SVDRegressor
 
 
 def test_svd_regressor_fit_predict():

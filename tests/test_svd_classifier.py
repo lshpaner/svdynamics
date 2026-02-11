@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.datasets import make_classification
-from support_vector_dynamics import CompositeKernel, SVDClassifier
+from svdynamics import CompositeKernel, SVDClassifier
 
 
 def test_svd_classifier_fit_predict():

@@ -1,5 +1,5 @@
 import numpy as np
-from support_vector_dynamics import CompositeKernel
+from svdynamics import CompositeKernel
 
 
 def test_composite_kernel_shapes_and_finiteness():
