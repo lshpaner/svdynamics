@@ -105,7 +105,7 @@ svd_estimator = SVDClassifier(
 )
 
 run_model(
-    name="SVM (mixed kernel: rbf + linear, Support Vector Dynamics)",
+    name="SVM (mixed kernel: rbf + linear => Support Vector Dynamics)",
     estimator=svd_estimator,
 )
 
