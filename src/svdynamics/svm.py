@@ -59,7 +59,16 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
             random_state=self.random_state,
         )
         self._model.fit(X, y)
+
+        # ---- expose sklearn-required fitted attributes ----
+        self.classes_ = self._model.classes_
+
+        # optional but good hygiene for sklearn tooling
+        if hasattr(self._model, "n_features_in_"):
+            self.n_features_in_ = self._model.n_features_in_
+
         return self
+
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return self._model.predict(X)
