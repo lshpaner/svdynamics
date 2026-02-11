@@ -1,4 +1,5 @@
 model_metrics==0.0.5a3
+model_tuner==0.0.34b3
 numpy>=1.21
 pytest>=7.0
 pytest_cov>=7.0
