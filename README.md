@@ -1,6 +1,6 @@
 <br>
 
-<img src="https://raw.githubusercontent.com/lshpaner/eda_toolkit/main/assets/eda_toolkit_logo.svg" width="300" style="border: none; outline: none; box-shadow: none;" oncontextmenu="return false;">
+<img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg?token=GHSAT0AAAAAADU4WLUYIXXPGFLDSJ3CBZ5K2MMYYEQ" width="300" style="border: none; outline: none; box-shadow: none;" oncontextmenu="return false;">
 
 <br> 
 
