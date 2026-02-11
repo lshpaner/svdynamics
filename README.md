@@ -1,4 +1,8 @@
-# Support Vector Dynamics (support-vector-dynamics)
+<br>
+
+<img src="https://raw.githubusercontent.com/lshpaner/eda_toolkit/main/assets/eda_toolkit_logo.svg" width="300" style="border: none; outline: none; box-shadow: none;" oncontextmenu="return false;">
+
+<br> 
 
 Support Vector Dynamics is a small library that adds first-class mixed (composite) kernels to scikit-learn SVMs.
 
@@ -12,7 +16,7 @@ pip install -e .
 ```python
 import numpy as np
 from sklearn.datasets import make_classification
-from support_vector_dynamics import CompositeKernel, SVDClassifier
+from svdynamics import CompositeKernel, SVDClassifier
 
 X, y = make_classification(n_samples=300, n_features=10, random_state=0)
 
