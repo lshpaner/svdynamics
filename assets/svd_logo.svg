@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-     viewBox="22 22 316 316"
+     viewBox="22 24 316 278"
      role="img" aria-label="Support Vector Dynamics logo">
 
   <defs>
@@ -8,6 +8,7 @@
       .t { fill:#000; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-weight:700; }
     </style>
 
+    <!-- circle for text path -->
     <path id="textcircle"
           d="M180,180
              m-140,0
@@ -15,14 +16,19 @@
              a140,140 0 1,1 -280,0" />
   </defs>
 
+  <!-- decision geometry -->
   <g>
+    <!-- outer guide circle -->
     <circle cx="180" cy="180" r="120" class="s" stroke-width="4"/>
 
+    <!-- margins -->
     <line x1="150" y1="80"  x2="150" y2="280" class="s" stroke-width="4"/>
     <line x1="210" y1="80"  x2="210" y2="280" class="s" stroke-width="4"/>
 
+    <!-- hyperplane -->
     <line x1="180" y1="70" x2="180" y2="290" class="s" stroke-width="8"/>
 
+    <!-- support vectors -->
     <circle cx="150" cy="150" r="7" fill="#000"/>
     <circle cx="150" cy="210" r="7" fill="#000"/>
 
@@ -30,6 +36,7 @@
     <circle cx="210" cy="230" r="7" fill="#000"/>
   </g>
 
+  <!-- circular text -->
   <text class="t" font-size="22" letter-spacing="1.5">
     <textPath href="#textcircle" startOffset="6%">
       SUPPORT VECTOR DYNAMICS
