@@ -11,18 +11,18 @@
 
    </div>
 
-.. raw:: html
-   
-   <div style="height: 40px;"></div>
 
 
-Support Vector Dynamics (svdynamics) is a lightweight, scikit-learn compatible
-library for building and using mixed (composite) kernels for support vector
-machines.
+Welcome to ``svdynamics``! Support Vector Dynamics is a lightweight, scikit-learn 
+compatible Python library for building and using mixed (composite) kernels for 
+support vector machines. It provides a simple and extensible interface for 
+combining multiple kernel functions into a single weighted kernel, while 
+remaining fully compatible with existing sklearn pipelines, cross-validation, 
+and calibration workflows.
 
-The goal of the project is to make kernel composition a first-class modeling
-primitive, while remaining fully compatible with existing sklearn pipelines,
-cross-validation, calibration and tooling.
+``svdynamics`` focuses on making kernel composition a first-class modeling primitive 
+for both classification and regression, without requiring any changes to the 
+underlying scikit-learn API.
 
 .. raw:: html
    
