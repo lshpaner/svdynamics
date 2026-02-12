@@ -10,7 +10,7 @@ from docutils.parsers.rst import roles
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'svdynamics'
-copyright = '2026, Leonid Shpaner'
+copyright = '2026, Leon Shpaner'
 author = 'Leon Shpaner'
 release = '0.0.0a0'
 
