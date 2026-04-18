@@ -8,7 +8,7 @@ Install from source (current development version):
 
 .. code-block:: bash
 
-   pip install -e .
+   pip install svdynamics
 
 
 Basic usage
