@@ -9,10 +9,10 @@ from docutils.parsers.rst import roles
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'svdynamics'
-copyright = '2026, Leon Shpaner'
-author = 'Leon Shpaner'
-release = '0.0.0a0'
+project = "svdynamics"
+copyright = "2026, Leon Shpaner"
+author = "Leon Shpaner"
+release = "0.0.0a0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -28,9 +28,15 @@ extensions = [
     # "sphinxcontrib.bibtex",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "sklearn": ("https://scikit-learn.org/stable/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/docs/", None),
+}
 
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -38,7 +44,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # html_theme = 'alabaster'
 html_theme = "pydata_sphinx_theme"
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # If your documentation is served from a subdirectory, set this to the subdirectory path
 html_show_sourcelink = False
@@ -60,6 +66,7 @@ html_css_files = [
     "custom.css",
     "custom.js",
 ]
+
 
 def setup(app):
     app.add_css_file("custom.css")
