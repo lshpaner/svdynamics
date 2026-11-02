@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; svdynamics 0.0.0a0 documentation</title>
+    <title>Getting started &#8212; svdynamics 0.0.1a0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=10bd5ce7"></script>
+    <script src="_static/documentation_options.js?v=616816be"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -118,7 +118,7 @@
   
   
   
-    <p class="title logo__title">svdynamics 0.0.0a0 documentation</p>
+    <p class="title logo__title">svdynamics 0.0.1a0 documentation</p>
   
 </a></div>
     
@@ -318,15 +318,17 @@
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>Install from source (current development version):</p>
+<p>Install the latest release from PyPI:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>svdynamics
 </pre></div>
 </div>
 </section>
 <section id="basic-usage">
 <h2>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
-<p>The central concept in svdynamics is the CompositeKernel object.</p>
-<p>A composite kernel represents a weighted sum of multiple base kernels.</p>
+<p>The central concept in <code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> is the <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> object.</p>
+<p>A composite kernel represents a weighted sum of multiple base kernels. This
+allows different kernel functions to be combined while retaining the standard
+scikit-learn SVM interface.</p>
 <p>Example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">svdynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompositeKernel</span><span class="p">,</span> <span class="n">SVDClassifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
@@ -334,7 +336,7 @@
 <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
     <span class="n">n_samples</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
     <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">CompositeKernel</span><span class="p">(</span>
@@ -361,15 +363,159 @@
 </pre></div>
 </div>
 </section>
-<section id="how-it-works">
-<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h2>
+<section id="how-composite-kernels-work">
+<h2>How composite kernels work<a class="headerlink" href="#how-composite-kernels-work" title="Link to this heading">#</a></h2>
 <p>Composite kernels are implemented as callable kernels passed directly to
 scikit-learn’s SVC / SVR.</p>
 <p>The resulting kernel matrix is computed as a weighted sum of the individual
 kernel matrices:</p>
 <div class="math notranslate nohighlight">
 \[K(x, x') = \sum_{i=1}^{m} w_i \, K_i(x, x')\]</div>
-<p>This makes svdynamics fully compatible with sklearn internals.</p>
+<p>where <span class="math notranslate nohighlight">\(K_i\)</span> represents the i-th base kernel and <span class="math notranslate nohighlight">\(w_i\)</span> represents
+its corresponding weight.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code>, these weights are specified directly by the user.
+For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This makes <code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> compatible with scikit-learn’s underlying SVM
+estimators while providing a convenient interface for combining kernels.</p>
+</section>
+<section id="adaptive-composite-kernels">
+<h2>Adaptive composite kernels<a class="headerlink" href="#adaptive-composite-kernels" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> also provides <code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> for learning kernel
+weights directly from the training data.</p>
+<p>Instead of manually specifying the contribution of each kernel,
+<code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> evaluates the relationship between each candidate
+kernel matrix and the training target. These relationships are then used to
+derive the composite kernel weights.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_circles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">svdynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdaptiveCompositeKernel</span><span class="p">,</span> <span class="n">SVDClassifier</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_circles</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>
+    <span class="n">factor</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">AdaptiveCompositeKernel</span><span class="p">(</span>
+    <span class="n">kernels</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+        <span class="p">(</span><span class="s2">&quot;poly&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;degree&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;coef0&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+    <span class="p">],</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVDClassifier</span><span class="p">(</span>
+    <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>During fitting, the kernel weights are learned automatically from the training
+data rather than supplied manually.</p>
+</section>
+<section id="kernel-target-alignment">
+<h2>Kernel-target alignment<a class="headerlink" href="#kernel-target-alignment" title="Link to this heading">#</a></h2>
+<p>Adaptive kernel weighting is based on kernel-target alignment.</p>
+<p>For a kernel matrix <span class="math notranslate nohighlight">\(K\)</span> and target kernel <span class="math notranslate nohighlight">\(K_y\)</span>, alignment is
+computed as:</p>
+<div class="math notranslate nohighlight">
+\[A(K, K_y) =
+\frac{
+    \langle K, K_y \rangle_F
+}{
+    \|K\|_F \, \|K_y\|_F
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\langle \cdot, \cdot \rangle_F\)</span> denotes the Frobenius inner
+product and <span class="math notranslate nohighlight">\(\|\cdot\|_F\)</span> denotes the Frobenius norm.</p>
+<p>For binary classification, the target kernel is constructed from the class
+labels as:</p>
+<div class="math notranslate nohighlight">
+\[K_y = y y^T\]</div>
+<p>The alignment score measures how strongly the structure induced by a candidate
+kernel corresponds to the structure of the training labels.</p>
+<p>Higher positive alignment indicates greater agreement between the candidate
+kernel and the target structure.</p>
+</section>
+<section id="learned-kernel-weights">
+<h2>Learned kernel weights<a class="headerlink" href="#learned-kernel-weights" title="Link to this heading">#</a></h2>
+<p>After fitting an <code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code>, the alignment scores and learned
+weights can be inspected directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">alignments_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">weights_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">alignments_</span></code> contains the kernel-target alignment score associated with each
+candidate kernel.</p>
+<p><code class="docutils literal notranslate"><span class="pre">weights_</span></code> contains the corresponding non-negative normalized kernel weights
+used by the fitted composite kernel.</p>
+<p>For example, a fitted model may produce:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>alignments_: [0.0004, 0.1481, 0.0195]
+weights_:    [0.0021, 0.8802, 0.1177]
+</pre></div>
+</div>
+<p>In this example, the RBF kernel receives the largest weight because it exhibits
+the strongest alignment with the target structure.</p>
+<p>The resulting adaptive composite kernel can be written as:</p>
+<div class="math notranslate nohighlight">
+\[K_{\mathrm{adaptive}}(x, x')
+=
+\sum_{i=1}^{m} \hat{w}_i K_i(x, x')\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{w}_i\)</span> denotes a weight learned from the training data.</p>
+</section>
+<section id="fixed-vs-adaptive-weighting">
+<h2>Fixed vs. adaptive weighting<a class="headerlink" href="#fixed-vs-adaptive-weighting" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> and <code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> provide two approaches to
+kernel composition.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code></dt><dd><p>Uses kernel weights specified directly by the user.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code></dt><dd><p>Learns kernel weights from the training data using kernel-target alignment.</p>
+</dd>
+</dl>
+<p>The original fixed-weight interface therefore remains available when kernel
+contributions are known in advance, while adaptive weighting provides a
+data-driven alternative.</p>
+</section>
+<section id="using-the-fitted-classifier">
+<h2>Using the fitted classifier<a class="headerlink" href="#using-the-fitted-classifier" title="Link to this heading">#</a></h2>
+<p>Once fitted, an <code class="docutils literal notranslate"><span class="pre">SVDClassifier</span></code> using an adaptive kernel behaves like the
+standard classifier interface:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If probability estimation is enabled:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">SVDClassifier</span><span class="p">(</span>
+    <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+    <span class="n">probability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The adaptive weighting step is handled during <code class="docutils literal notranslate"><span class="pre">fit()</span></code>, after which prediction
+uses the learned composite kernel.</p>
 </section>
 </section>
 
@@ -422,7 +568,12 @@ kernel matrices:</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How it works</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-composite-kernels-work">How composite kernels work</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-composite-kernels">Adaptive composite kernels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-target-alignment">Kernel-target alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learned-kernel-weights">Learned kernel weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-vs-adaptive-weighting">Fixed vs. adaptive weighting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-fitted-classifier">Using the fitted classifier</a></li>
 </ul>
   </nav></div>
 
