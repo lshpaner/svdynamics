@@ -16,6 +16,9 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Sphinx build cache
+**/.doctrees/
+
 # -----------------------
 # Packaging / build
 # -----------------------
@@ -41,3 +44,4 @@ htmlcov/
 # -----------------------
 .DS_Store
 Thumbs.db
+
