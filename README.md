@@ -108,7 +108,7 @@ If you use `svdynamics` in your research or projects, please consider citing it.
 ## ⚖️ License
 
 `svdynamics` is distributed under the MIT License. See
-[LICENSE](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md)
+[LICENSE](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.MD)
 for more information.
 
 --------
