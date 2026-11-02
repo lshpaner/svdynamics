@@ -101,7 +101,7 @@ If you use `svdynamics` in your research or projects, please consider citing it.
 
 ```bibtex
 @software{shpaner_2026_23872830,
-  author       = {Shpaner, Leon},
+  author       = {Shpaner, Leonid},
   title        = {{svdynamics: Support Vector Dynamics}},
   year         = 2026,
   publisher    = {Zenodo},
