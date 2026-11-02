@@ -3,6 +3,13 @@
      style="border: none; outline: none; box-shadow: none;"
      oncontextmenu="return false;">
 
+<br>
+
+[![PyPI](https://img.shields.io/pypi/v/svdynamics.svg)](https://pypi.org/project/svdynamics/)
+[![Downloads](https://pepy.tech/badge/svdynamics)](https://pepy.tech/project/svdynamics)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md)
+[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.23872830.svg)](https://doi.org/10.5281/zenodo.23872830)
+
 Welcome to `svdynamics`! Support Vector Dynamics is a lightweight, scikit-learn
 compatible Python library for building and using mixed (composite) kernels for
 support vector machines. It provides a simple and extensible interface for
