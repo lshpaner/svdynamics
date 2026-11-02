@@ -1,4 +1,7 @@
-<img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg" height="250" style="border: none; outline: none; box-shadow: none;" oncontextmenu="return false;">
+<img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg"
+     height="250"
+     style="border: none; outline: none; box-shadow: none;"
+     oncontextmenu="return false;">
 
 Welcome to `svdynamics`! Support Vector Dynamics is a lightweight, scikit-learn
 compatible Python library for building and using mixed (composite) kernels for
@@ -11,14 +14,15 @@ and calibration workflows.
 for both classification and regression, without requiring any changes to the
 underlying scikit-learn API.
 
+
 ## Prerequisites
 
 Before you install `svdynamics`, ensure your system meets the following requirements:
 
 - `Python`: Version `3.8` or higher.
 
-
-Additionally, `svdynamics` depends on the following packages, which will be automatically installed:
+Additionally, `svdynamics` depends on the following packages, which will be
+automatically installed:
 
 - `numpy`: version `1.21` or higher
 - `scikit-learn`: version `1.0` or higher
@@ -28,10 +32,10 @@ Additionally, `svdynamics` depends on the following packages, which will be auto
 
 To install `svdynamics`, simply run the following command in your terminal:
 
-
 ```bash
 pip install svdynamics
 ```
+
 
 ## Quick Start
 
@@ -40,7 +44,12 @@ import numpy as np
 from sklearn.datasets import make_classification
 from svdynamics import CompositeKernel, SVDClassifier
 
-X, y = make_classification(n_samples=300, n_features=10, random_state=0)
+
+X, y = make_classification(
+    n_samples=300,
+    n_features=10,
+    random_state=0,
+)
 
 kernel = CompositeKernel(
     kernels=[
@@ -52,14 +61,22 @@ kernel = CompositeKernel(
     normalize=True,
 )
 
-clf = SVDClassifier(C=1.0, kernel=kernel, probability=True, random_state=0)
+clf = SVDClassifier(
+    C=1.0,
+    kernel=kernel,
+    probability=True,
+    random_state=0,
+)
+
 clf.fit(X, y)
+
 proba = clf.predict_proba(X[:5])
 pred = clf.predict(X[:5])
 
 print(proba)
 print(pred)
 ```
+
 
 ## 📄 Official Documentation
 
@@ -70,6 +87,28 @@ https://lshpaner.github.io/svdynamics
 
 1. [Leon Shpaner](https://www.leonshpaner.com)
 
+
+## 📚 Citing `svdynamics`
+
+If you use `svdynamics` in your research or projects, please consider citing it.
+
+```bibtex
+@software{shpaner_2026_23872830,
+  author       = {Shpaner, Leon},
+  title        = {{svdynamics: Support Vector Dynamics}},
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v0.0.1a0},
+  doi          = {10.5281/zenodo.23872830},
+  url          = {https://doi.org/10.5281/zenodo.23872830}
+}
+```
+
+
 ## ⚖️ License
 
-`svdynamics` is distributed under the MIT License. See [LICENSE](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md) for more information.
+`svdynamics` is distributed under the MIT License. See
+[LICENSE](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md)
+for more information.
+
+--------
