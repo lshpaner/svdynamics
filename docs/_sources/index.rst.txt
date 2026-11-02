@@ -11,8 +11,6 @@
 
    </div>
 
-
-
 Welcome to ``svdynamics``! Support Vector Dynamics is a lightweight, scikit-learn 
 compatible Python library for building and using mixed (composite) kernels for 
 support vector machines. It provides a simple and extensible interface for 
