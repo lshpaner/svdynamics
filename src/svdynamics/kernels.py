@@ -1,35 +1,69 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Callable, List, Optional, Sequence
 
 import numpy as np
-from sklearn.metrics.pairwise import linear_kernel, polynomial_kernel, rbf_kernel, sigmoid_kernel
+from sklearn.metrics.pairwise import (
+    linear_kernel,
+    polynomial_kernel,
+    rbf_kernel,
+    sigmoid_kernel,
+)
 
-from .utils import ParsedKernel, KernelSpec, _validate_weights
+from .utils import KernelSpec, ParsedKernel, _validate_weights
 
 
 SUPPORTED_KERNELS = {"linear", "rbf", "poly", "sigmoid"}
 
 
 def _parse_kernel_spec(spec: KernelSpec) -> ParsedKernel:
+    """Parse a kernel specification into a ParsedKernel."""
+
     # Callable kernel
     if callable(spec):
-        return ParsedKernel(kind="callable", params={}, fn=spec)
+        return ParsedKernel(
+            kind="callable",
+            params={},
+            fn=spec,
+        )
 
     # String kernel
     if isinstance(spec, str):
         k = spec.lower().strip()
-        if k not in SUPPORTED_KERNELS:
-            raise ValueError(f"Unsupported kernel '{spec}'. Supported: {sorted(SUPPORTED_KERNELS)}")
-        return ParsedKernel(kind=k, params={}, fn=None)
 
-    # Tuple kernel ("rbf", {...})
-    if isinstance(spec, tuple) and len(spec) == 2 and isinstance(spec[0], str) and isinstance(spec[1], dict):
-        k = spec[0].lower().strip()
         if k not in SUPPORTED_KERNELS:
-            raise ValueError(f"Unsupported kernel '{spec[0]}'. Supported: {sorted(SUPPORTED_KERNELS)}")
-        return ParsedKernel(kind=k, params=dict(spec[1]), fn=None)
+            raise ValueError(
+                f"Unsupported kernel '{spec}'. "
+                f"Supported: {sorted(SUPPORTED_KERNELS)}"
+            )
+
+        return ParsedKernel(
+            kind=k,
+            params={},
+            fn=None,
+        )
+
+    # Tuple kernel, for example ("rbf", {"gamma": 0.1})
+    if (
+        isinstance(spec, tuple)
+        and len(spec) == 2
+        and isinstance(spec[0], str)
+        and isinstance(spec[1], dict)
+    ):
+        k = spec[0].lower().strip()
+
+        if k not in SUPPORTED_KERNELS:
+            raise ValueError(
+                f"Unsupported kernel '{spec[0]}'. "
+                f"Supported: {sorted(SUPPORTED_KERNELS)}"
+            )
+
+        return ParsedKernel(
+            kind=k,
+            params=dict(spec[1]),
+            fn=None,
+        )
 
     raise TypeError(
         "Kernel spec must be one of: "
@@ -39,7 +73,13 @@ def _parse_kernel_spec(spec: KernelSpec) -> ParsedKernel:
     )
 
 
-def _compute_kernel(parsed: ParsedKernel, X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+def _compute_kernel(
+    parsed: ParsedKernel,
+    X: np.ndarray,
+    Y: np.ndarray,
+) -> np.ndarray:
+    """Compute a kernel matrix from a parsed kernel specification."""
+
     if parsed.kind == "callable":
         assert parsed.fn is not None
         K = parsed.fn(X, Y)
@@ -49,47 +89,179 @@ def _compute_kernel(parsed: ParsedKernel, X: np.ndarray, Y: np.ndarray) -> np.nd
         return linear_kernel(X, Y)
 
     if parsed.kind == "rbf":
-        return rbf_kernel(X, Y, **parsed.params)
+        return rbf_kernel(
+            X,
+            Y,
+            **parsed.params,
+        )
 
     if parsed.kind == "poly":
-        return polynomial_kernel(X, Y, **parsed.params)
+        return polynomial_kernel(
+            X,
+            Y,
+            **parsed.params,
+        )
 
     if parsed.kind == "sigmoid":
-        return sigmoid_kernel(X, Y, **parsed.params)
+        return sigmoid_kernel(
+            X,
+            Y,
+            **parsed.params,
+        )
 
-    raise RuntimeError(f"Unexpected kernel kind: {parsed.kind}")
+    raise RuntimeError(
+        f"Unexpected kernel kind: {parsed.kind}"
+    )
 
 
-def _kernel_scale_from_diag(Kxx: np.ndarray, eps: float = 1e-12) -> float:
-    # Kxx is square kernel matrix
+def _kernel_scale_from_diag(
+    Kxx: np.ndarray,
+    eps: float = 1e-12,
+) -> float:
+    """Compute a stable scale factor from a kernel diagonal."""
+
     d = np.diag(Kxx)
-    # Use mean of diagonal as a stable scalar, avoid zeros
-    s = float(np.sqrt(max(float(np.mean(d * d)), eps)))
+
+    s = float(
+        np.sqrt(
+            max(
+                float(np.mean(d * d)),
+                eps,
+            )
+        )
+    )
+
     if not np.isfinite(s) or s <= 0.0:
         return 1.0
+
     return s
+
+
+def _kernel_target_alignment(
+    K: np.ndarray,
+    y: np.ndarray,
+    eps: float = 1e-12,
+) -> float:
+    """Compute normalized alignment between a kernel matrix and targets."""
+
+    K = np.asarray(
+        K,
+        dtype=float,
+    )
+
+    y = np.asarray(
+        y,
+        dtype=float,
+    ).ravel()
+
+    if K.ndim != 2 or K.shape[0] != K.shape[1]:
+        raise ValueError(
+            "K must be a square kernel matrix"
+        )
+
+    if K.shape[0] != y.shape[0]:
+        raise ValueError(
+            "K and y must contain the same number of samples"
+        )
+
+    target_kernel = np.outer(
+        y,
+        y,
+    )
+
+    numerator = np.sum(
+        K * target_kernel
+    )
+
+    denominator = (
+        np.linalg.norm(
+            K,
+            ord="fro",
+        )
+        * np.linalg.norm(
+            target_kernel,
+            ord="fro",
+        )
+    )
+
+    if denominator <= eps:
+        return 0.0
+
+    return float(
+        numerator / denominator
+    )
+
+
+def _alignment_weights(
+    kernels: Sequence[np.ndarray],
+    y: np.ndarray,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    """Compute normalized kernel weights from target alignment."""
+
+    if len(kernels) == 0:
+        raise ValueError(
+            "kernels must be a non-empty sequence"
+        )
+
+    alignments = np.asarray(
+        [
+            _kernel_target_alignment(
+                K,
+                y,
+                eps=eps,
+            )
+            for K in kernels
+        ],
+        dtype=float,
+    )
+
+    # Negative alignment does not contribute to the mixture.
+    alignments = np.maximum(
+        alignments,
+        0.0,
+    )
+
+    total = alignments.sum()
+
+    # Fall back to uniform weights if no kernel has
+    # meaningful positive alignment.
+    if total <= eps:
+        return (
+            np.ones(
+                len(kernels),
+                dtype=float,
+            )
+            / len(kernels)
+        )
+
+    return alignments / total
 
 
 @dataclass
 class CompositeKernel:
     """
-    CompositeKernel builds a callable kernel that is a weighted sum of base kernels.
+    Weighted combination of multiple base kernels.
 
     K(X, Y) = sum_m w_m * K_m(X, Y)
 
     Parameters
     ----------
     kernels:
-        List of kernel specs. Each element can be:
-        - "rbf" | "linear" | "poly" | "sigmoid"
-        - ("rbf", {"gamma": 0.1}) etc.
+        Sequence of kernel specifications. Each element can be:
+
+        - "rbf", "linear", "poly", or "sigmoid"
+        - ("rbf", {"gamma": 0.1}), etc.
         - callable kernel(X, Y) -> ndarray
+
     weights:
-        Optional weights for kernels. If None, uniform weights are used.
-        Weights are normalized to sum to 1.
+        Optional weights for the kernels. If None, uniform weights
+        are used. Weights are normalized to sum to 1.
+
     normalize:
-        If True, each base kernel is rescaled by a scalar derived from K(X, X)
-        to reduce dominance due to scale.
+        If True, each base kernel is rescaled using a scalar derived
+        from K(X, X).
+
     eps:
         Small constant used for numerical stability.
     """
@@ -101,48 +273,178 @@ class CompositeKernel:
 
     def __post_init__(self) -> None:
         if self.kernels is None or len(self.kernels) == 0:
-            raise ValueError("kernels must be a non-empty sequence")
+            raise ValueError(
+                "kernels must be a non-empty sequence"
+            )
 
-        self._parsed: List[ParsedKernel] = [_parse_kernel_spec(s) for s in self.kernels]
-        self._weights: np.ndarray = _validate_weights(len(self._parsed), self.weights)
+        self._parsed: List[ParsedKernel] = [
+            _parse_kernel_spec(spec)
+            for spec in self.kernels
+        ]
+
+        self._weights: np.ndarray = _validate_weights(
+            len(self._parsed),
+            self.weights,
+        )
 
     @property
     def parsed_kernels(self) -> List[ParsedKernel]:
+        """Return parsed kernel specifications."""
+
         return list(self._parsed)
 
     @property
     def normalized_weights(self) -> np.ndarray:
+        """Return normalized kernel weights."""
+
         return self._weights.copy()
 
-    def as_callable(self) -> Callable[[np.ndarray, np.ndarray], np.ndarray]:
-        def _k(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    def as_callable(
+        self,
+    ) -> Callable[[np.ndarray, np.ndarray], np.ndarray]:
+        """Return the composite kernel as a callable."""
+
+        def _k(
+            X: np.ndarray,
+            Y: np.ndarray,
+        ) -> np.ndarray:
             return self(X, Y)
 
         return _k
 
-    def __call__(self, X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    def __call__(
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+    ) -> np.ndarray:
+        """Compute the composite kernel matrix."""
+
         X = np.asarray(X)
         Y = np.asarray(Y)
 
-        # Compute normalization scalars using K(X, X) for each kernel if requested
         scales: List[float] = []
+
         if self.normalize:
             for pk in self._parsed:
-                Kxx = _compute_kernel(pk, X, X)
+                Kxx = _compute_kernel(
+                    pk,
+                    X,
+                    X,
+                )
+
                 if Kxx.shape[0] != Kxx.shape[1]:
-                    raise ValueError("Expected square K(X, X) during normalization")
-                scales.append(_kernel_scale_from_diag(Kxx, eps=self.eps))
+                    raise ValueError(
+                        "Expected square K(X, X) during normalization"
+                    )
+
+                scales.append(
+                    _kernel_scale_from_diag(
+                        Kxx,
+                        eps=self.eps,
+                    )
+                )
         else:
             scales = [1.0] * len(self._parsed)
 
-        # Combine kernels
         K_total = None
-        for w, s, pk in zip(self._weights, scales, self._parsed):
-            K = _compute_kernel(pk, X, Y)
+
+        for w, s, pk in zip(
+            self._weights,
+            scales,
+            self._parsed,
+        ):
+            K = _compute_kernel(
+                pk,
+                X,
+                Y,
+            )
+
             if K_total is None:
                 K_total = (w / s) * K
             else:
                 K_total += (w / s) * K
 
         assert K_total is not None
-        return np.asarray(K_total, dtype=float)
+
+        return np.asarray(
+            K_total,
+            dtype=float,
+        )
+
+
+@dataclass
+class AdaptiveCompositeKernel(CompositeKernel):
+    """
+    Composite kernel with weights learned from training data.
+
+    Kernel weights are estimated using normalized kernel-target
+    alignment.
+
+    Parameters
+    ----------
+    kernels:
+        Sequence of kernel specifications.
+
+    weights:
+        Initial kernel weights. These are replaced by learned
+        weights when fit() is called.
+
+    normalize:
+        If True, rescale individual kernels when constructing the
+        composite kernel.
+
+    eps:
+        Small constant used for numerical stability.
+    """
+
+    weights: Optional[Sequence[float]] = None
+
+    def fit(
+        self,
+        X: np.ndarray,
+        y: np.ndarray,
+    ) -> "AdaptiveCompositeKernel":
+        """Learn kernel weights from training data."""
+
+        X = np.asarray(X)
+
+        y = np.asarray(
+            y,
+            dtype=float,
+        ).ravel()
+
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(
+                "X and y must contain the same number of samples"
+            )
+
+        kernel_matrices = [
+            _compute_kernel(
+                pk,
+                X,
+                X,
+            )
+            for pk in self._parsed
+        ]
+
+        self.alignments_ = np.asarray(
+            [
+                _kernel_target_alignment(
+                    K,
+                    y,
+                    eps=self.eps,
+                )
+                for K in kernel_matrices
+            ],
+            dtype=float,
+        )
+
+        self._weights = _alignment_weights(
+            kernel_matrices,
+            y,
+            eps=self.eps,
+        )
+
+        self.weights_ = self._weights.copy()
+
+        return self
