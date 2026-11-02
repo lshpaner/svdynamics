@@ -2,10 +2,11 @@
 
    <div class="no-click">
 
-.. image:: ../assets/svd_logo.svg
+.. image:: ../assets/svd_logo_blue.svg
    :alt: SVDynamics Logo
    :align: left
    :width: 250px
+   :class: dark-light
 
 .. raw:: html
 
