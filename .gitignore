@@ -1,0 +1,51 @@
+# -----------------------
+# Virtual environments
+# -----------------------
+*venv/
+env/
+venv/
+
+# Any folder whose name starts with "venv"
+venv*/
+
+# -----------------------
+# Python cache / build
+# -----------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Sphinx build cache
+**/.doctrees/
+
+# -----------------------
+# Packaging / build
+# -----------------------
+build/
+dist/
+*.egg-info/
+
+# -----------------------
+# Test / coverage
+# -----------------------
+.pytest_cache/
+.coverage
+htmlcov/
+
+# -----------------------
+# IDE / editor
+# -----------------------
+.vscode/
+.idea/
+
+## ----------------------
+# Data folders
+data_output/
+
+# -----------------------
+# OS
+# -----------------------
+.DS_Store
+Thumbs.db
+

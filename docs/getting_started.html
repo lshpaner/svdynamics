@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting started &#8212; svdynamics 0.0.1a1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=92000231"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Kernel visualizations" href="visualizations.html" />
+    <link rel="prev" title="Welcome to svdynamics!" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">svdynamics 0.0.1a1 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="visualizations.html">
+                        Kernel visualizations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api.html">
+                        API reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="visualizations.html">
+                        Kernel visualizations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api.html">
+                        API reference
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Getting started</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading">#</a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<p>Install <code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> from PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>svdynamics
+</pre></div>
+</div>
+<p>For this prerelease specifically:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">svdynamics</span><span class="o">==</span><span class="m">0</span>.0.1a1
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h2>
+<p>The central concept in <code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> is the <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> object.
+A composite kernel combines multiple base kernels in a weighted sum while
+retaining the familiar scikit-learn SVM interface.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">svdynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompositeKernel</span><span class="p">,</span> <span class="n">SVDClassifier</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">CompositeKernel</span><span class="p">(</span>
+    <span class="n">kernels</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}),</span>
+        <span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="s2">&quot;poly&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;degree&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;coef0&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+    <span class="p">],</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVDClassifier</span><span class="p">(</span>
+    <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+    <span class="n">probability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The estimator fits its own copy of the supplied kernel. The original
+<code class="docutils literal notranslate"><span class="pre">kernel</span></code> configuration remains unchanged; fitted state is available
+through <code class="docutils literal notranslate"><span class="pre">clf.kernel_</span></code>.</p>
+</section>
+<section id="how-composite-kernels-work">
+<h2>How composite kernels work<a class="headerlink" href="#how-composite-kernels-work" title="Permalink to this heading">#</a></h2>
+<p>Composite kernels are implemented as callable kernels supplied to
+scikit-learn’s SVC or SVR. A composite kernel is a weighted sum of base
+kernels:</p>
+<div class="math notranslate nohighlight">
+\[K(x, x') = \sum_{i=1}^{m} w_i \, K_i(x, x')\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(K_i\)</span> is the i-th base kernel and <span class="math notranslate nohighlight">\(w_i\)</span> is its weight.
+With <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code>, users specify the weights directly, for example
+<code class="docutils literal notranslate"><span class="pre">weights=[0.6,</span> <span class="pre">0.3,</span> <span class="pre">0.1]</span></code>. Weights must be nonnegative and cannot all be
+zero; zero can be used to disable a component.</p>
+<p>When normalization is enabled, the base kernels are scaled before their
+weighted sum is computed.</p>
+</section>
+<section id="kernel-normalization">
+<h2>Kernel normalization<a class="headerlink" href="#kernel-normalization" title="Permalink to this heading">#</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">normalize=True</span></code>, each base kernel is scaled to reduce differences
+in magnitude between kernel matrices. In <code class="docutils literal notranslate"><span class="pre">0.0.1a1</span></code>, the scales are
+computed from training data and reused for predictions. This prevents a
+point’s decision score from changing merely because it was evaluated in a
+different prediction batch.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SVDClassifier</span></code> and <code class="docutils literal notranslate"><span class="pre">SVDRegressor</span></code> fit normalization scales as part of
+estimator fitting. Inspect the fitted scales through the estimator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">scales_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When using a <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> directly, fit its scales explicitly on
+training observations before evaluating new data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kernel</span><span class="o">.</span><span class="n">fit_scales</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">scales_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Evaluating a normalized kernel on new data without fitted scales emits a
+warning.</p>
+</section>
+<section id="adaptive-composite-kernels">
+<h2>Adaptive composite kernels<a class="headerlink" href="#adaptive-composite-kernels" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> learns weights from training data rather than
+requiring them to be specified manually. It measures the alignment of each
+candidate kernel matrix with the binary training targets and derives
+nonnegative, normalized weights.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_circles</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">svdynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdaptiveCompositeKernel</span><span class="p">,</span> <span class="n">SVDClassifier</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_circles</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>
+    <span class="n">factor</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">AdaptiveCompositeKernel</span><span class="p">(</span>
+    <span class="n">kernels</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+        <span class="p">(</span><span class="s2">&quot;poly&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;degree&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;coef0&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+    <span class="p">],</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVDClassifier</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">alignments_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">weights_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The estimator’s <code class="docutils literal notranslate"><span class="pre">kernel_</span></code> contains the learned state. The original
+<code class="docutils literal notranslate"><span class="pre">kernel</span></code> passed to the estimator is not fitted in place. Calling
+<code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel.fit(X_train,</span> <span class="pre">y_train)</span></code> directly remains supported.</p>
+</section>
+<section id="kernel-target-alignment">
+<h2>Kernel-target alignment<a class="headerlink" href="#kernel-target-alignment" title="Permalink to this heading">#</a></h2>
+<p>For a kernel matrix <span class="math notranslate nohighlight">\(K\)</span> and target kernel <span class="math notranslate nohighlight">\(K_y\)</span>, the uncentered
+kernel-target alignment is</p>
+<div class="math notranslate nohighlight">
+\[A(K, K_y) =
+\frac{\langle K, K_y \rangle_F}
+{\|K\|_F \, \|K_y\|_F}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\langle \cdot, \cdot \rangle_F\)</span> denotes the Frobenius inner
+product and <span class="math notranslate nohighlight">\(\|\cdot\|_F\)</span> the Frobenius norm.</p>
+<p>For binary classification, the target kernel is</p>
+<div class="math notranslate nohighlight">
+\[K_y = \tilde{y}\tilde{y}^{T}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde{y}\)</span> contains the class labels mapped internally to
+-1 and +1. This makes the learned alignment scores invariant to the
+supported binary-label encodings, including 0/1, -1/+1, and strings.</p>
+<p>Negative alignment scores are clipped to zero, and the remaining scores
+are normalized into weights. If none are positive, uniform weights are
+used. Larger positive alignments receive greater weight.</p>
+</section>
+<section id="learned-kernel-weights">
+<h2>Learned kernel weights<a class="headerlink" href="#learned-kernel-weights" title="Permalink to this heading">#</a></h2>
+<p>For the adaptive classifier fitted above, inspect the learned quantities
+through <code class="docutils literal notranslate"><span class="pre">clf.kernel_</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">alignments_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">weights_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">alignments_</span></code> stores the candidate kernel-target alignment scores, and
+<code class="docutils literal notranslate"><span class="pre">weights_</span></code> stores the resulting nonnegative, normalized kernel weights.
+For illustration, a fitted model might produce:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>alignments_: [0.0004, 0.1481, 0.0195]
+weights_:    [0.0021, 0.8802, 0.1177]
+</pre></div>
+</div>
+<p>These values are illustrative, not guaranteed output for the example above.
+The RBF kernel receives the largest weight in this illustration because
+its alignment is highest.</p>
+<p>The resulting adaptive composite kernel can be written as</p>
+<div class="math notranslate nohighlight">
+\[K_{\mathrm{adaptive}}(x, x') =
+\sum_{i=1}^{m} \hat{w}_i K_i(x, x')\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{w}_i\)</span> is a learned weight. When normalization is enabled,
+the base kernels in this expression are understood to be normalized using
+the training-derived scales.</p>
+</section>
+<section id="fixed-versus-adaptive-weighting">
+<h2>Fixed versus adaptive weighting<a class="headerlink" href="#fixed-versus-adaptive-weighting" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> uses weights specified by the user.
+<code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> learns weights from binary training targets
+using uncentered kernel-target alignment.</p>
+<p>Adaptive weighting is a training-data heuristic, not direct optimization
+of held-out predictive performance. It does not guarantee an improvement
+over a single RBF kernel or another fixed kernel configuration.</p>
+</section>
+<section id="adaptive-weighting-requirements">
+<h2>Adaptive weighting requirements<a class="headerlink" href="#adaptive-weighting-requirements" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code> supports binary classification only. It
+accepts supported two-class encodings such as 0/1, -1/+1, and strings,
+and maps the two classes internally to -1 and +1. Multiclass targets
+raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SVDRegressor</span></code> supports fixed <code class="docutils literal notranslate"><span class="pre">CompositeKernel</span></code> configurations, but
+not <code class="docutils literal notranslate"><span class="pre">AdaptiveCompositeKernel</span></code>. Passing an adaptive kernel to the
+regressor raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
+</section>
+<section id="using-the-fitted-classifier">
+<h2>Using the fitted classifier<a class="headerlink" href="#using-the-fitted-classifier" title="Permalink to this heading">#</a></h2>
+<p>Once fitted, <code class="docutils literal notranslate"><span class="pre">SVDClassifier</span></code> exposes the familiar scikit-learn
+prediction interface:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For probability estimates, enable probability estimation before fitting:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">SVDClassifier</span><span class="p">(</span>
+    <span class="n">C</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+    <span class="n">probability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The fitted adaptive weights and normalization scales are reused at
+prediction time.</p>
+</section>
+<section id="kernel-validation-and-diagnostics">
+<h2>Kernel validation and diagnostics<a class="headerlink" href="#kernel-validation-and-diagnostics" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">svdynamics</span></code> validates kernel-matrix dimensions, finite values, and
+symmetry of training Gram matrices. Invalid custom kernel outputs raise
+descriptive errors.</p>
+<p>Inspect the smallest Gram-matrix eigenvalue of each base kernel using
+<code class="docutils literal notranslate"><span class="pre">min_eigenvalues</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eigenvalues</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">min_eigenvalues</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Custom and sigmoid kernels are not guaranteed to be positive semidefinite.
+This diagnostic can help identify indefinite kernels, but does not modify
+or repair them.</p>
+</section>
+<section id="package-help">
+<h2>Package help<a class="headerlink" href="#package-help" title="Permalink to this heading">#</a></h2>
+<p>Display the package overview without changing Python’s built-in
+<code class="docutils literal notranslate"><span class="pre">help()</span></code> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">svdynamics</span>
+
+<span class="n">svdynamics</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to svdynamics!</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="visualizations.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Kernel visualizations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-composite-kernels-work">How composite kernels work</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-normalization">Kernel normalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-composite-kernels">Adaptive composite kernels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-target-alignment">Kernel-target alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learned-kernel-weights">Learned kernel weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-versus-adaptive-weighting">Fixed versus adaptive weighting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-weighting-requirements">Adaptive weighting requirements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-fitted-classifier">Using the fitted classifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-validation-and-diagnostics">Kernel validation and diagnostics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-help">Package help</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Leon Shpaner.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

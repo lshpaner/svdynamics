@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Minimum supported versions (pyproject.toml floors)
+          - label: "Python 3.8, minimum dependencies"
+            os: ubuntu-22.04
+            python-version: "3.8"
+            deps: "'numpy==1.21.6' 'scikit-learn==1.0.2' 'scipy<1.10'"
+          # Current releases
+          - label: "Python 3.12, latest dependencies"
+            os: ubuntu-latest
+            python-version: "3.12"
+            deps: "numpy scikit-learn"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ${{ matrix.deps }} pytest
+
+      # Tests import from src/ directly so the 3.8 job does not need the
+      # build backend (setuptools>=77 itself requires Python 3.9+).
+      - name: Run unit tests
+        env:
+          PYTHONPATH: src
+        run: python -m pytest unittests
