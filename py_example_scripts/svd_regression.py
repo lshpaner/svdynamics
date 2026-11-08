@@ -1,92 +1,35 @@
+"""Diabetes regression with a held-out test set and a CV-tuned composite."""
 from sklearn.datasets import load_diabetes
-from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
-
-from model_tuner.model_tuner_utils import Model
-
 from svdynamics import CompositeKernel, SVDRegressor
 
-# ------------------------------------------------------------------
-# Data
-# ------------------------------------------------------------------
-
-data = load_diabetes(as_frame=True)
-X = data["data"]
-y = data["target"]
-
-rstate = 42
-
-# ------------------------------------------------------------------
-# Pipeline
-# ------------------------------------------------------------------
-
-pipeline = [
-    ("StandardScaler", StandardScaler()),
-    ("Preprocessor", SimpleImputer()),
-]
-
-tuned_parameters = {
-    "svm__C": [0.1, 1.0],
+X, y = load_diabetes(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+estimators = {
+    "RBF SVR": SVR(kernel="rbf"),
+    "Linear SVR": SVR(kernel="linear"),
+    "Composite SVR": SVDRegressor(
+        kernel=CompositeKernel(
+            [("rbf", {"gamma": 0.05}), "linear"],
+            weights=[0.7, 0.3], normalize=True)),
 }
-
-# ------------------------------------------------------------------
-# Composite kernel
-# ------------------------------------------------------------------
-
-mixed_kernel = CompositeKernel(
-    kernels=[
-        ("rbf", {"gamma": 0.05}),
-        ("linear", {}),
-    ],
-    weights=[0.7, 0.3],
-    normalize=True,
-)
-
-estimator = SVDRegressor(
-    kernel=mixed_kernel,
-    C=1.0,
-)
-
-# ------------------------------------------------------------------
-# Model
-# ------------------------------------------------------------------
-
-model = Model(
-    name="SVR (Support Vector Dynamics)",
-    estimator_name="svm",
-    calibrate=False,
-    model_type="regression",
-    estimator=estimator,
-    pipeline_steps=pipeline,
-    kfold=True,
-    stratify_y=False,
-    grid=tuned_parameters,
-    randomized_grid=False,
-    n_iter=2,
-    boost_early=False,
-    scoring=["r2", "neg_root_mean_squared_error"],
-    n_jobs=-1,
-    random_state=rstate,
-    imbalance_sampler=None,
-)
-
-# ------------------------------------------------------------------
-# Grid search
-# ------------------------------------------------------------------
-
-model.grid_search_param_tuning(X, y)
-
-# ------------------------------------------------------------------
-# Fit
-# ------------------------------------------------------------------
-
-model.fit(X, y)
-
-# ------------------------------------------------------------------
-# Basic sanity checks
-# ------------------------------------------------------------------
-
-preds = model.predict(X)
-
-assert preds.shape[0] == X.shape[0]
+for name, estimator in estimators.items():
+    pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler()),
+        ("svm", estimator),
+    ])
+    search = GridSearchCV(pipeline, {"svm__C": [0.1, 1, 10, 100]},
+                          scoring="neg_root_mean_squared_error", cv=5, n_jobs=-1)
+    search.fit(X_train, y_train)
+    pred = search.predict(X_test)
+    print(f"{name:16} R2={r2_score(y_test, pred):.3f} "
+          f"RMSE={mean_squared_error(y_test, pred) ** 0.5:.3f} "
+          f"MAE={mean_absolute_error(y_test, pred):.3f} "
+          f"best_C={search.best_params_['svm__C']}")

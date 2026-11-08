@@ -1,70 +1,40 @@
+"""Held-out classification comparison for standard and composite SVMs."""
 import numpy as np
-
 from sklearn.datasets import make_classification
-from sklearn.metrics import (
-    roc_auc_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    accuracy_score,
-    classification_report,
-)
+from sklearn.metrics import accuracy_score, average_precision_score, balanced_accuracy_score, brier_score_loss, f1_score, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from svdynamics import AdaptiveCompositeKernel, CompositeKernel, SVDClassifier
 
-from svdynamics import CompositeKernel, SVDClassifier
-
-
-X, y = make_classification(
-    n_samples=300,
-    n_features=10,
-    random_state=0,
-)
-
-kernel = CompositeKernel(
-    kernels=[
-        ("rbf", {"gamma": 0.2}),
-        ("linear", {}),
-        ("poly", {"degree": 2, "coef0": 1.0}),
-    ],
-    weights=[0.6, 0.3, 0.1],
-    normalize=True,
-)
-
-clf = SVDClassifier(
-    C=1.0,
-    kernel=kernel,
-    probability=True,
-    random_state=0,
-)
-
-clf.fit(X, y)
-
-# --- predictions on the full dataset (for metrics) ---
-y_pred = clf.predict(X)
-y_proba = clf.predict_proba(X)[:, 1]
-
-# --- metrics ---
-auc = roc_auc_score(y, y_proba)
-precision = precision_score(y, y_pred)
-recall = recall_score(y, y_pred)
-f1 = f1_score(y, y_pred)
-acc = accuracy_score(y, y_pred)
-
-print("\n=== Classification metrics (training set) ===")
-print(f"Accuracy : {acc:.4f}")
-print(f"ROC AUC  : {auc:.4f}")
-print(f"Precision: {precision:.4f}")
-print(f"Recall   : {recall:.4f}")
-print(f"F1 score : {f1:.4f}")
-
-print("\nClassification report:")
-print(classification_report(y, y_pred))
-
-# --- quick sanity check on a few rows ---
-proba_5 = clf.predict_proba(X[:5])
-pred_5 = clf.predict(X[:5])
-
-print("\nFirst 5 predicted probabilities:")
-print(proba_5)
-
-print("\nFirst 5 predicted labels:")
-print(pred_5)
+X, y = make_classification(n_samples=500, n_features=10, n_informative=6,
+                           n_redundant=2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42)
+specs = [("rbf", {"gamma": 0.1}), "linear", ("poly", {"degree": 2, "coef0": 1})]
+models = {
+    "RBF SVC": SVC(kernel="rbf", C=1, probability=True, random_state=42),
+    "Linear SVC": SVC(kernel="linear", C=1, probability=True, random_state=42),
+    "Fixed composite": SVDClassifier(
+        kernel=CompositeKernel(specs, weights=[0.6, 0.3, 0.1]),
+        probability=True, random_state=42),
+    "Adaptive composite": SVDClassifier(
+        kernel=AdaptiveCompositeKernel(specs),
+        probability=True, random_state=42),
+}
+for name, estimator in models.items():
+    pipe = make_pipeline(StandardScaler(), estimator)
+    pipe.fit(X_train, y_train)
+    pred = pipe.predict(X_test)
+    fitted = pipe.steps[-1][1]
+    proba = pipe.predict_proba(X_test)[:, list(fitted.classes_).index(1)]
+    print(f"{name:20} accuracy={accuracy_score(y_test, pred):.3f} "
+          f"balanced_acc={balanced_accuracy_score(y_test, pred):.3f} "
+          f"F1={f1_score(y_test, pred):.3f} "
+          f"AUC={roc_auc_score(y_test, proba):.3f} "
+          f"AP={average_precision_score(y_test, proba):.3f} "
+          f"Brier={brier_score_loss(y_test, proba):.3f}")
+    if name == "Adaptive composite":
+        print("  Learned weights:", np.round(fitted.kernel_.weights_, 3))
+        print("  Alignments:", np.round(fitted.kernel_.alignments_, 3))

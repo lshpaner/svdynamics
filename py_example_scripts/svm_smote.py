@@ -1,144 +1,43 @@
-from sklearn.datasets import load_breast_cancer
-from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
-from sklearn.svm import SVC
+"""Imbalanced classification with leakage-safe SMOTE inside CV folds.
 
-from model_tuner.model_tuner_utils import Model
-import model_tuner
+Optional dependency: pip install imbalanced-learn
+"""
 from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline
+from sklearn.datasets import make_classification
+from sklearn.metrics import average_precision_score, balanced_accuracy_score, roc_auc_score
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from svdynamics import AdaptiveCompositeKernel, CompositeKernel, SVDClassifier
 
-from svdynamics import CompositeKernel, SVDClassifier
-
-
-print()
-print(f"Model Tuner version: {model_tuner.__version__}")
-print(f"Model Tuner authors: {model_tuner.__author__}")
-print()
-
-# ------------------------------------------------------------------
-# Data
-# ------------------------------------------------------------------
-
-bc = load_breast_cancer(as_frame=True)["frame"]
-bc_cols = [c for c in bc.columns if c != "target"]
-X = bc[bc_cols]
-y = bc["target"]
-
-rstate = 42
-
-print("Data shape:", X.shape)
-
-# ------------------------------------------------------------------
-# Shared config
-# ------------------------------------------------------------------
-
-pipeline = [
-    ("StandardScalar", StandardScaler()),
-    ("Preprocessor", SimpleImputer()),
-]
-
-tuned_parameters = {
-    "svm__C": [1, 10],
+X, y = make_classification(n_samples=900, n_features=12, n_informative=7,
+                           n_redundant=2, weights=[0.9, 0.1],
+                           flip_y=0.01, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42)
+specs = [("rbf", {"gamma": 0.1}), "linear"]
+models = {
+    "RBF": SVC(kernel="rbf", probability=True, random_state=42),
+    "Fixed": SVDClassifier(kernel=CompositeKernel(specs, weights=[0.7, 0.3]),
+                           probability=True, random_state=42),
+    "Adaptive": SVDClassifier(kernel=AdaptiveCompositeKernel(specs),
+                              probability=True, random_state=42),
 }
-
-kfold = True
-calibrate = True
-
-
-def run_model(name, estimator):
-    print("\n" + "=" * 80)
-    print(name)
-    print("=" * 80)
-
-    model = Model(
-        name=name,
-        estimator_name="svm",
-        calibrate=calibrate,
-        model_type="classification",
-        estimator=estimator,
-        pipeline_steps=pipeline,
-        kfold=kfold,
-        stratify_y=True,
-        grid=tuned_parameters,
-        randomized_grid=False,
-        n_iter=4,
-        boost_early=False,
-        scoring=["roc_auc"],
-        n_jobs=-2,
-        random_state=rstate,
-        imbalance_sampler=SMOTE(random_state=rstate),
-    )
-
-    model.grid_search_param_tuning(X, y, f1_beta_tune=True)
-    model.fit(X, y)
-
-    if model.calibrate:
-        model.calibrateModel(
-            X,
-            y,
-            score="roc_auc",
-            f1_beta_tune=True
-        )
-
-    print("Validation Metrics")
-    model.return_metrics(X, y, print_threshold=True, model_metrics=True)
-
-
-# ------------------------------------------------------------------
-# 1) Mixed kernel (Support Vector Dynamics)
-# ------------------------------------------------------------------
-
-mixed_kernel = CompositeKernel(
-    kernels=[
-        ("rbf", {"gamma": 0.05}),
-        ("linear", {}),
-    ],
-    weights=[0.7, 0.3],
-    normalize=True,
-)
-
-svd_estimator = SVDClassifier(
-    kernel=mixed_kernel,
-    C=1.0,
-    probability=True,
-    random_state=rstate,
-)
-
-run_model(
-    name="SVM (mixed kernel: rbf + linear => Support Vector Dynamics)",
-    estimator=svd_estimator,
-)
-
-# ------------------------------------------------------------------
-# 2) Plain RBF SVM
-# ------------------------------------------------------------------
-
-rbf_estimator = SVC(
-    kernel="rbf",
-    C=1.0,
-    probability=True,
-    class_weight=None,
-    random_state=rstate,
-)
-
-run_model(
-    name="SVM (plain rbf kernel, sklearn)",
-    estimator=rbf_estimator,
-)
-
-# ------------------------------------------------------------------
-# 3) Plain linear SVM
-# ------------------------------------------------------------------
-
-linear_estimator = SVC(
-    kernel="linear",
-    C=1.0,
-    probability=True,
-    class_weight=None,
-    random_state=rstate,
-)
-
-run_model(
-    name="SVM (plain linear kernel, sklearn)",
-    estimator=linear_estimator,
-)
+for name, estimator in models.items():
+    # SMOTE is fitted only on training partitions, including inside each CV fold.
+    pipeline = Pipeline([
+        ("scale", StandardScaler()),
+        ("smote", SMOTE(random_state=42, k_neighbors=3)),
+        ("svm", estimator),
+    ])
+    search = GridSearchCV(pipeline, {"svm__C": [0.1, 1, 10]},
+                          scoring="average_precision", cv=5, n_jobs=-1)
+    search.fit(X_train, y_train)
+    scores = search.predict_proba(X_test)[:, 1]
+    preds = search.predict(X_test)
+    print(f"{name:9} AP={average_precision_score(y_test, scores):.3f} "
+          f"AUC={roc_auc_score(y_test, scores):.3f} "
+          f"balanced_acc={balanced_accuracy_score(y_test, preds):.3f} "
+          f"best_C={search.best_params_['svm__C']}")
+# Final test set is never used for fitting, tuning, or threshold selection.
