@@ -137,6 +137,23 @@ def _kernel_scale_from_diag(
     return s
 
 
+def _binary_targets(y: np.ndarray) -> np.ndarray:
+    """Map any two-class label vector to -1/+1 for alignment."""
+
+    y = np.asarray(y).ravel()
+    classes = np.unique(y)
+
+    if classes.shape[0] != 2:
+        raise ValueError(
+            "AdaptiveCompositeKernel supports binary targets only; "
+            f"got {classes.shape[0]} classes"
+        )
+
+    # Which class becomes +1 does not matter: y y^T is unchanged
+    # when every label flips sign.
+    return np.where(y == classes[1], 1.0, -1.0)
+
+
 def _kernel_target_alignment(
     K: np.ndarray,
     y: np.ndarray,
@@ -408,10 +425,7 @@ class AdaptiveCompositeKernel(CompositeKernel):
 
         X = np.asarray(X)
 
-        y = np.asarray(
-            y,
-            dtype=float,
-        ).ravel()
+        y = _binary_targets(y)
 
         if X.shape[0] != y.shape[0]:
             raise ValueError(
