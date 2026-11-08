@@ -4,9 +4,13 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-  
+
 jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+
   build-and-publish:
+    needs: tests
     runs-on: ubuntu-latest
 
     steps:

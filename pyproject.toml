@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 license = "MIT"
 license-files = ["LICENSE.MD"]
 authors = [
-  { name = "Leonid Shpaner" }
+  { name = "Leonid Shpaner", email = "lshpaner@ucla.edu" }
 ]
 dependencies = [
   "numpy>=1.21",
@@ -20,6 +20,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/lshpaner/svdynamics"
+Documentation = "https://lshpaner.github.io/svdynamics/"
+Issues = "https://github.com/lshpaner/svdynamics/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

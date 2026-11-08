@@ -9,7 +9,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/svdynamics.svg)](https://pypi.org/project/svdynamics/)
 [![Downloads](https://pepy.tech/badge/svdynamics)](https://pepy.tech/project/svdynamics)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.MD)
 [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.23872830.svg)](https://doi.org/10.5281/zenodo.23872830)
 
 Welcome to `svdynamics`! Support Vector Dynamics is a lightweight Python
@@ -40,6 +40,9 @@ automatically installed:
 
 - `numpy`: version `1.21` or higher
 - `scikit-learn`: version `1.0` or higher
+
+The test suite passes on both the minimum supported versions (Python 3.8,
+NumPy 1.21, scikit-learn 1.0) and current releases.
 
 
 ## 💾 Installation
@@ -91,6 +94,33 @@ print(proba)
 print(pred)
 ```
 
+
+## Adaptive kernel weights
+
+`AdaptiveCompositeKernel` learns the kernel weights from the training data
+using kernel-target alignment, instead of taking them as fixed inputs. It
+supports binary classification; for regression or multiclass targets, use
+`CompositeKernel` with fixed weights.
+
+```python
+from sklearn.datasets import make_circles
+from svdynamics import AdaptiveCompositeKernel, SVDClassifier
+
+X, y = make_circles(n_samples=300, noise=0.1, factor=0.4, random_state=0)
+
+clf = SVDClassifier(
+    kernel=AdaptiveCompositeKernel(
+        kernels=["linear", ("rbf", {"gamma": 1.0}), ("poly", {"degree": 2})],
+    ),
+)
+clf.fit(X, y)
+
+# The kernel you pass in is left unchanged; the fitted copy is kernel_
+print(clf.kernel_.weights_)     # learned mixture weights (sum to 1)
+print(clf.kernel_.alignments_)  # alignment score of each base kernel
+```
+
+Run `svdynamics.help()` for a package overview.
 
 ## 📄 Official Documentation
 
