@@ -1,9 +1,8 @@
 <img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg"
-     height="280"
-     style="border: none; outline: none; box-shadow: none;"
-     oncontextmenu="return false;">
-
-<br>
+     align="left"
+     width="220"
+     hspace="20"
+     alt="Support Vector Dynamics logo">
 
 [![PyPI](https://img.shields.io/pypi/v/svdynamics.svg)](https://pypi.org/project/svdynamics/)
 [![Downloads](https://pepy.tech/badge/svdynamics)](https://pepy.tech/project/svdynamics)
@@ -21,6 +20,7 @@ and calibration workflows.
 for both classification and regression, without requiring any changes to the
 underlying scikit-learn API.
 
+<br clear="left">
 
 ## Prerequisites
 
