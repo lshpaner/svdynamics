@@ -27,7 +27,7 @@ Issues = "https://github.com/lshpaner/svdynamics/issues"
 packages = ["src/svdynamics"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/svdynamics", "/README_pypi.md", "/LICENSE.MD", "/pyproject.toml"]
+include = ["/src/svdynamics", "/readme_pypi.md", "/LICENSE.MD", "/pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["unittests"]
