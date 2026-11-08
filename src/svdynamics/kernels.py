@@ -316,6 +316,44 @@ class CompositeKernel:
 
         return self._weights.copy()
 
+    def fit_scales(
+        self,
+        X: np.ndarray,
+    ) -> "CompositeKernel":
+        """
+        Compute and store per-kernel normalization scales from
+        training data.
+
+        Once stored, every later call uses these scales, so a point's
+        kernel values (and the model's predictions) do not depend on
+        which other points are passed alongside it.
+        """
+
+        X = np.asarray(X)
+
+        if self.normalize:
+            self.scales_ = np.asarray(
+                [
+                    _kernel_scale_from_diag(
+                        _compute_kernel(
+                            pk,
+                            X,
+                            X,
+                        ),
+                        eps=self.eps,
+                    )
+                    for pk in self._parsed
+                ],
+                dtype=float,
+            )
+        else:
+            self.scales_ = np.ones(
+                len(self._parsed),
+                dtype=float,
+            )
+
+        return self
+
     def as_callable(
         self,
     ) -> Callable[[np.ndarray, np.ndarray], np.ndarray]:
@@ -341,7 +379,12 @@ class CompositeKernel:
 
         scales: List[float] = []
 
-        if self.normalize:
+        if getattr(self, "scales_", None) is not None:
+            # Training-derived scales (set by fit_scales).
+            scales = list(self.scales_)
+        elif self.normalize:
+            # Fallback for standalone use before fit_scales():
+            # scales come from the first argument.
             for pk in self._parsed:
                 Kxx = _compute_kernel(
                     pk,
@@ -460,5 +503,7 @@ class AdaptiveCompositeKernel(CompositeKernel):
         )
 
         self.weights_ = self._weights.copy()
+
+        self.fit_scales(X)
 
         return self

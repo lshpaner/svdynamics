@@ -76,6 +76,9 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
             self.kernel,
             CompositeKernel,
         ):
+            # Fix normalization to the training data so predictions
+            # do not depend on the prediction batch.
+            self.kernel.fit_scales(X)
             k = self.kernel.as_callable()
         else:
             k = self.kernel
@@ -192,6 +195,9 @@ class SVDRegressor(BaseEstimator, RegressorMixin):
             self.kernel,
             CompositeKernel,
         ):
+            # Fix normalization to the training data so predictions
+            # do not depend on the prediction batch.
+            self.kernel.fit_scales(X)
             k = self.kernel.as_callable()
         else:
             k = self.kernel
