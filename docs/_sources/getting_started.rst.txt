@@ -207,8 +207,8 @@ For illustration, a fitted model might produce:
 
 .. code-block:: text
 
-   alignments_: [0.0004, 0.1481, 0.0195]
-   weights_:    [0.0021, 0.8802, 0.1177]
+   alignments_: [0.0027, 0.1476, 0.0206]
+   weights_:    [0.0160, 0.8635, 0.1205]
 
 These values are illustrative, not guaranteed output for the example above.
 The RBF kernel receives the largest weight in this illustration because

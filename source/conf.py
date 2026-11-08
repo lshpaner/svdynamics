@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from docutils import nodes
@@ -7,8 +6,8 @@ from docutils.parsers.rst import roles
 # -- Project information -----------------------------------------------------
 
 project = "svdynamics"
-copyright = "2026, Leon Shpaner"
-author = "Leon Shpaner"
+copyright = "2026, Leonid Shpaner"
+author = "Leonid Shpaner"
 release = "0.0.1a1"
 version = release
 
