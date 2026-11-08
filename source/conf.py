@@ -12,7 +12,7 @@ from docutils.parsers.rst import roles
 project = 'svdynamics'
 copyright = '2026, Leonid Shpaner'
 author = 'Leon Shpaner'
-release = '0.0.1a0'
+release = '0.0.1a1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
