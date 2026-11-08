@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Sequence
 
@@ -385,6 +386,15 @@ class CompositeKernel:
         elif self.normalize:
             # Fallback for standalone use before fit_scales():
             # scales come from the first argument.
+            if Y is not X:
+                warnings.warn(
+                    "CompositeKernel called before fit_scales(); "
+                    "normalization scales are computed from the first "
+                    "argument, so results depend on which points are "
+                    "passed together. Call fit_scales(X_train) first.",
+                    UserWarning,
+                    stacklevel=2,
+                )
             for pk in self._parsed:
                 Kxx = _compute_kernel(
                     pk,

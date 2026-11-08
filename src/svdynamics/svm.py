@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Union
 
@@ -63,24 +64,32 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
         training data before the underlying SVC is fitted.
         """
 
-        if isinstance(
-            self.kernel,
-            AdaptiveCompositeKernel,
-        ):
-            self.kernel.fit(
-                X,
-                y,
-            )
-
+        # Fit a copy so the user's kernel (an init parameter) is never
+        # modified; the fitted kernel is exposed as kernel_.
         if isinstance(
             self.kernel,
             CompositeKernel,
         ):
-            # Fix normalization to the training data so predictions
-            # do not depend on the prediction batch.
-            self.kernel.fit_scales(X)
-            k = self.kernel.as_callable()
+            kernel = copy.deepcopy(self.kernel)
+
+            if isinstance(
+                kernel,
+                AdaptiveCompositeKernel,
+            ):
+                # Learns weights and stores training-time scales.
+                kernel.fit(
+                    X,
+                    y,
+                )
+            else:
+                # Fix normalization to the training data so predictions
+                # do not depend on the prediction batch.
+                kernel.fit_scales(X)
+
+            self.kernel_ = kernel
+            k = kernel.as_callable()
         else:
+            self.kernel_ = self.kernel
             k = self.kernel
 
         self._model = SVC(
@@ -193,13 +202,25 @@ class SVDRegressor(BaseEstimator, RegressorMixin):
 
         if isinstance(
             self.kernel,
+            AdaptiveCompositeKernel,
+        ):
+            raise TypeError(
+                "AdaptiveCompositeKernel learns weights from binary class "
+                "labels and is not supported for regression; use "
+                "CompositeKernel with fixed weights."
+            )
+
+        # Fit a copy so the user's kernel is never modified.
+        if isinstance(
+            self.kernel,
             CompositeKernel,
         ):
-            # Fix normalization to the training data so predictions
-            # do not depend on the prediction batch.
-            self.kernel.fit_scales(X)
-            k = self.kernel.as_callable()
+            kernel = copy.deepcopy(self.kernel)
+            kernel.fit_scales(X)
+            self.kernel_ = kernel
+            k = kernel.as_callable()
         else:
+            self.kernel_ = self.kernel
             k = self.kernel
 
         self._model = SVR(

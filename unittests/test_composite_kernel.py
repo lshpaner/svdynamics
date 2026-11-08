@@ -17,6 +17,7 @@ def test_composite_kernel_shapes_and_finiteness():
         normalize=True,
     )
 
+    ck.fit_scales(X)
     K = ck(X, Y)
 
     assert K.shape == (X.shape[0], Y.shape[0])

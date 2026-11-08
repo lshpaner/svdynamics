@@ -40,10 +40,9 @@ def test_regressor_predictions_do_not_depend_on_batch(data):
 
 def test_scales_come_from_training_data(data):
     X, y = data
-    k = CompositeKernel(KERNELS)
-    SVDClassifier(kernel=k).fit(X, y)
+    model = SVDClassifier(kernel=CompositeKernel(KERNELS)).fit(X, y)
     expected = CompositeKernel(KERNELS).fit_scales(X).scales_
-    np.testing.assert_allclose(k.scales_, expected)
+    np.testing.assert_allclose(model.kernel_.scales_, expected)
 
 
 def test_normalize_false_gives_unit_scales(data):
