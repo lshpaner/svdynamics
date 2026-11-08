@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=77", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
 
 [project]
 name = "svdynamics"
@@ -23,11 +23,11 @@ Homepage = "https://github.com/lshpaner/svdynamics"
 Documentation = "https://lshpaner.github.io/svdynamics/"
 Issues = "https://github.com/lshpaner/svdynamics/issues"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.hatch.build.targets.wheel]
+packages = ["src/svdynamics"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.hatch.build.targets.sdist]
+include = ["src/svdynamics", "README.md", "LICENSE.MD", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["unittests"]
