@@ -79,6 +79,49 @@ def _compute_kernel(
     X: np.ndarray,
     Y: np.ndarray,
 ) -> np.ndarray:
+    """Compute a kernel matrix and check its shape and values."""
+
+    K = _compute_kernel_raw(
+        parsed,
+        X,
+        Y,
+    )
+
+    if K.ndim != 2 or K.shape != (X.shape[0], Y.shape[0]):
+        raise ValueError(
+            f"Kernel '{parsed.kind}' returned shape {K.shape}; "
+            f"expected ({X.shape[0]}, {Y.shape[0]})"
+        )
+
+    if not np.all(np.isfinite(K)):
+        raise ValueError(
+            f"Kernel '{parsed.kind}' returned non-finite values "
+            "(NaN or inf)"
+        )
+
+    return K
+
+
+def _check_gram_symmetric(
+    K: np.ndarray,
+    kind: str,
+    rtol: float = 1e-6,
+    atol: float = 1e-8,
+) -> None:
+    """Raise if a training Gram matrix K(X, X) is not symmetric."""
+
+    if not np.allclose(K, K.T, rtol=rtol, atol=atol):
+        raise ValueError(
+            f"Kernel '{kind}' is not symmetric: K(X, X) != K(X, X)^T. "
+            "A valid kernel must satisfy k(x, z) = k(z, x)."
+        )
+
+
+def _compute_kernel_raw(
+    parsed: ParsedKernel,
+    X: np.ndarray,
+    Y: np.ndarray,
+) -> np.ndarray:
     """Compute a kernel matrix from a parsed kernel specification."""
 
     if parsed.kind == "callable":
@@ -317,6 +360,38 @@ class CompositeKernel:
 
         return self._weights.copy()
 
+    def min_eigenvalues(
+        self,
+        X: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Smallest eigenvalue of each base kernel's Gram matrix on X.
+
+        Optional diagnostic for positive semidefiniteness (PSD). A valid
+        kernel gives values >= 0 up to rounding (about -1e-8 relative to
+        the largest eigenvalue). Sigmoid kernels are not PSD in general and
+        may return clearly negative values. Cost is O(n^3) per kernel, so
+        use a subsample for large X.
+        """
+
+        X = np.asarray(X)
+
+        return np.asarray(
+            [
+                float(
+                    np.linalg.eigvalsh(
+                        _compute_kernel(
+                            pk,
+                            X,
+                            X,
+                        )
+                    )[0]
+                )
+                for pk in self._parsed
+            ],
+            dtype=float,
+        )
+
     def fit_scales(
         self,
         X: np.ndarray,
@@ -332,26 +407,33 @@ class CompositeKernel:
 
         X = np.asarray(X)
 
-        if self.normalize:
-            self.scales_ = np.asarray(
-                [
-                    _kernel_scale_from_diag(
-                        _compute_kernel(
-                            pk,
-                            X,
-                            X,
-                        ),
-                        eps=self.eps,
-                    )
-                    for pk in self._parsed
-                ],
-                dtype=float,
+        scales = []
+
+        for pk in self._parsed:
+            # Validate every training Gram matrix, whether or not it is
+            # used for normalization.
+            Kxx = _compute_kernel(
+                pk,
+                X,
+                X,
             )
-        else:
-            self.scales_ = np.ones(
-                len(self._parsed),
-                dtype=float,
+            _check_gram_symmetric(
+                Kxx,
+                pk.kind,
             )
+            scales.append(
+                _kernel_scale_from_diag(
+                    Kxx,
+                    eps=self.eps,
+                )
+                if self.normalize
+                else 1.0
+            )
+
+        self.scales_ = np.asarray(
+            scales,
+            dtype=float,
+        )
 
         return self
 
@@ -493,6 +575,15 @@ class AdaptiveCompositeKernel(CompositeKernel):
             )
             for pk in self._parsed
         ]
+
+        for pk, K in zip(
+            self._parsed,
+            kernel_matrices,
+        ):
+            _check_gram_symmetric(
+                K,
+                pk.kind,
+            )
 
         self.alignments_ = np.asarray(
             [

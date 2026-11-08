@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg"
      align="left"
-     width="220"
+     width="280"
      hspace="20"
      alt="Support Vector Dynamics logo">
 
@@ -9,12 +9,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/lshpaner/svdynamics/blob/main/LICENSE.md)
 [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.23872830.svg)](https://doi.org/10.5281/zenodo.23872830)
 
-Welcome to `svdynamics`! Support Vector Dynamics is a lightweight, scikit-learn
-compatible Python library for building and using mixed (composite) kernels for
-support vector machines. It provides a simple and extensible interface for
-combining multiple kernel functions into a single weighted kernel, while
-remaining fully compatible with existing sklearn pipelines, cross-validation,
-and calibration workflows.
+Welcome to `svdynamics`! Support Vector Dynamics is a lightweight Python
+library for building and using mixed (composite) kernels for support vector
+machines, designed to integrate with scikit-learn. It provides a simple and
+extensible interface for combining multiple kernel functions into a single
+weighted kernel. Its estimators work inside scikit-learn pipelines,
+cross-validation, grid search, and probability calibration (each covered by
+the test suite); formal estimator-compliance checks (`check_estimator`) are not
+yet complete.
 
 `svdynamics` focuses on making kernel composition a first-class modeling primitive
 for both classification and regression, without requiring any changes to the
@@ -105,7 +107,7 @@ If you use `svdynamics` in your research or projects, please consider citing it.
   title        = {{svdynamics: Support Vector Dynamics}},
   year         = 2026,
   publisher    = {Zenodo},
-  version      = {v0.0.1a0},
+  version      = {v0.0.2a0},
   doi          = {10.5281/zenodo.23872830},
   url          = {https://doi.org/10.5281/zenodo.23872830}
 }

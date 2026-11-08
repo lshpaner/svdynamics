@@ -1,6 +1,3 @@
-import builtins
-import sys
-
 from .logo import *
 from .kernels import (
     AdaptiveCompositeKernel,
@@ -23,14 +20,15 @@ __all__ = [
 # Detailed Documentation
 
 detailed_doc = """
-Welcome to svdynamics! Support Vector Dynamics is a lightweight,
-scikit-learn compatible Python library for building and using mixed
-(composite) kernels for support vector machines.
+Welcome to svdynamics! Support Vector Dynamics is a lightweight
+Python library for building and using mixed (composite) kernels for
+support vector machines, designed to integrate with scikit-learn.
 
 It provides a simple and extensible interface for combining multiple
-kernel functions into a single weighted kernel, while remaining fully
-compatible with existing sklearn pipelines, cross-validation, and
-calibration workflows.
+kernel functions into a single weighted kernel. Its estimators work
+inside scikit-learn pipelines, cross-validation, grid search, and
+probability calibration (each covered by the test suite); formal
+estimator-compliance checks (check_estimator) are not yet complete.
 
 svdynamics supports both fixed-weight composite kernels and adaptive
 composite kernels whose weights are learned from training data using
@@ -43,7 +41,7 @@ underlying scikit-learn API.
 PyPI: https://pypi.org/project/svdynamics/
 Documentation: https://lshpaner.github.io/svdynamics/
 
-Version: 0.0.1a0
+Version: 0.0.2a0
 """
 
 
@@ -51,30 +49,18 @@ Version: 0.0.1a0
 __doc__ = detailed_doc
 
 
-__version__ = "0.0.1a0"
+__version__ = "0.0.2a0"
 __author__ = "Leonid Shpaner"
 __email__ = "lshpaner@ucla.edu"
 
 
-# Define the custom help function
-def custom_help(obj=None):
+def help() -> None:
     """
-    Custom help function to dynamically include ASCII art in help()
-    output.
+    Print the svdynamics logo and package overview.
+
+    Call as ``svdynamics.help()``. Python's built-in ``help()`` is left
+    unchanged, so ``help(svdynamics)`` shows the standard docstring view.
     """
 
-    if obj is None or obj is sys.modules[__name__]:
-        # When help() is called for this module
-        print(svdynamics_logo)
-        print(detailed_doc)
-    else:
-        # Use the original help for other objects
-        original_help(obj)
-
-
-# Backup the original help function
-original_help = builtins.help
-
-
-# Override the global help function in builtins
-builtins.help = custom_help
+    print(svdynamics_logo)
+    print(detailed_doc)

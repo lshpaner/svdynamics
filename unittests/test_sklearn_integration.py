@@ -54,3 +54,15 @@ def test_callable_kernel_survives_deepcopy():
     assert copy.deepcopy(k).parsed_kernels[1].fn is my_rbf
     X, y = make_moons(200, noise=0.2, random_state=0)
     assert SVDClassifier(kernel=k).fit(X, y).score(X, y) > 0.8
+
+
+def test_calibrated_classifier_with_adaptive_kernel():
+    from sklearn.calibration import CalibratedClassifierCV
+
+    X, y = make_moons(300, noise=0.2, random_state=0)
+    cal = CalibratedClassifierCV(
+        SVDClassifier(kernel=AdaptiveCompositeKernel(KERNELS)), cv=3
+    ).fit(X, y)
+    p = cal.predict_proba(X[:10])
+    assert p.shape == (10, 2)
+    np.testing.assert_allclose(p.sum(axis=1), 1.0)

@@ -38,6 +38,11 @@ def _validate_weights(num_kernels: int, weights: Optional[Sequence[float]]) -> n
     if np.any(~np.isfinite(w)):
         raise ValueError("weights must be finite")
 
+    # A nonnegative combination of valid (PSD) kernels is itself a valid
+    # kernel; a negative weight can break that guarantee.
+    if np.any(w < 0):
+        raise ValueError("weights must be nonnegative")
+
     if np.allclose(w.sum(), 0.0):
         raise ValueError("weights sum to 0")
 
