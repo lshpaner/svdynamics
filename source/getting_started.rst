@@ -14,7 +14,7 @@ For this prerelease specifically:
 
 .. code-block:: bash
 
-   pip install svdynamics==0.0.1a1
+   pip install svdynamics==0.0.1a2
 
 
 Basic usage

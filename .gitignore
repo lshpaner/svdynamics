@@ -49,3 +49,7 @@ data_output/
 .DS_Store
 Thumbs.db
 
+
+# Build artifacts
+pip-wheel-metadata/
+_build/

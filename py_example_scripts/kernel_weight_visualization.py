@@ -1,6 +1,10 @@
 """Plot adaptive kernel weights on three different binary datasets."""
+import argparse
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")  # render to file; no window needed
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import make_circles, make_moons, make_classification
@@ -36,9 +40,15 @@ ax.set_ylim(0, 1)
 ax.legend()
 fig.tight_layout()
 
-# Save rather than open a window, so `make` runs unattended.
-out = Path("data_output") / "kernel_weights.png"
+# Output folder and resolution are configurable so the same script feeds both
+# data_output/ (default, 300 DPI) and the docs (make docs_figures).
+parser = argparse.ArgumentParser()
+parser.add_argument("--out-dir", default="data_output")
+parser.add_argument("--dpi", type=int, default=300)
+args = parser.parse_args()
+
+out = Path(args.out_dir) / "kernel_weights.png"
 out.parent.mkdir(parents=True, exist_ok=True)
-fig.savefig(out, dpi=300, bbox_inches="tight")
+fig.savefig(out, dpi=args.dpi, bbox_inches="tight")
 plt.close(fig)
 print(f"Saved figure to {out}")

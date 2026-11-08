@@ -142,7 +142,7 @@ If you use `svdynamics` in your research or projects, please consider citing it.
   title        = {{svdynamics: Support Vector Dynamics}},
   year         = 2026,
   publisher    = {Zenodo},
-  version      = {v0.0.1a1},
+  version      = {0.0.1a2},
   doi          = {10.5281/zenodo.23872830},
   url          = {https://doi.org/10.5281/zenodo.23872830}
 }

@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "svdynamics"
-version = "0.0.1a1"
+version = "0.0.1a2"
 description = "Support Vector Dynamics: mixed (composite) kernels for scikit-learn SVMs."
-readme = "README.md"
+readme = "readme_pypi.md"
 requires-python = ">=3.8"
 license = "MIT"
 license-files = ["LICENSE.MD"]
@@ -27,7 +27,7 @@ Issues = "https://github.com/lshpaner/svdynamics/issues"
 packages = ["src/svdynamics"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/svdynamics", "README.md", "LICENSE.MD", "pyproject.toml"]
+include = ["/src/svdynamics", "/README_pypi.md", "/LICENSE.MD", "/pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["unittests"]

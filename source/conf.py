@@ -8,7 +8,7 @@ from docutils.parsers.rst import roles
 project = "svdynamics"
 copyright = "2026, Leonid Shpaner"
 author = "Leonid Shpaner"
-release = "0.0.1a1"
+release = "0.0.1a2"
 version = release
 
 # -- General configuration ---------------------------------------------------

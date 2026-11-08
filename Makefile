@@ -113,15 +113,49 @@ run_custom_kernel: | $(DATA_OUTPUT)
 run_kernel_psd_diagnostics: | $(DATA_OUTPUT)
 	$(call run_example,kernel_psd_diagnostics)
 
+## Plot repeated-CV accuracy box plots
+.PHONY: run_cv_comparison_visualization
+run_cv_comparison_visualization: | $(DATA_OUTPUT)
+	$(call run_example,cv_comparison_visualization)
+
 ## Run the original three examples
 .PHONY: run_core_py_example_scripts
 run_core_py_example_scripts: run_make_classification run_svd_regression run_svm_smote
 	@echo "Core scripts complete. Logs in $(DATA_OUTPUT)/"
 
-## Run all nine examples
+## Run all ten examples
 .PHONY: run_all_py_example_scripts
-run_all_py_example_scripts: run_core_py_example_scripts run_adaptive_kernel_comparison run_kernel_weight_visualization run_decision_boundary_visualization run_sklearn_pipeline_gridsearch run_custom_kernel run_kernel_psd_diagnostics
+run_all_py_example_scripts: run_core_py_example_scripts run_adaptive_kernel_comparison run_kernel_weight_visualization run_decision_boundary_visualization run_sklearn_pipeline_gridsearch run_custom_kernel run_kernel_psd_diagnostics run_cv_comparison_visualization
 	@echo "All scripts complete. Logs in $(DATA_OUTPUT)/"
+
+################################################################################
+# DOCUMENTATION (run on the docs branch, which holds source/ and docs/)
+################################################################################
+DOCS_SOURCE := source
+DOCS_STATIC := $(DOCS_SOURCE)/_static
+DOCS_OUTPUT := docs
+DOCS_FIG_DPI := 150
+DOCS_FIGURES := decision_boundary_visualization kernel_weight_visualization cv_comparison_visualization
+
+## Regenerate documentation figures into source/_static
+.PHONY: docs_figures
+docs_figures:
+	@test -d $(DOCS_SOURCE) || { echo "No $(DOCS_SOURCE)/ folder: run this on the docs branch"; exit 1; }
+	@for script in $(DOCS_FIGURES); do \
+		$(PYTHON_INTERPRETER) $(SCRIPT_DIR)/$$script.py --out-dir $(DOCS_STATIC) --dpi $(DOCS_FIG_DPI) || exit 1; \
+	done
+
+## Rebuild figures and the full HTML site into docs/ from scratch
+.PHONY: docs_html
+docs_html: docs_figures
+	rm -rf $(DOCS_SOURCE)/_build
+	$(PYTHON_INTERPRETER) -m sphinx -q -b html $(DOCS_SOURCE) $(DOCS_SOURCE)/_build/html
+	mkdir -p $(DOCS_OUTPUT)
+	find $(DOCS_OUTPUT) -mindepth 1 ! -name .nojekyll -delete
+	cp -r $(DOCS_SOURCE)/_build/html/. $(DOCS_OUTPUT)/
+	rm -rf $(DOCS_SOURCE)/_build
+	@echo "Figures in the built site:"
+	@ls $(DOCS_OUTPUT)/_static/*.png
 
 ################################################################################
 # BUILD AND RELEASE
