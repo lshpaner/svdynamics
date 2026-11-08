@@ -1,8 +1,11 @@
+<table>
+<tr>
+<td width="300" valign="middle">
 <img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg"
-     align="left"
      width="280"
-     hspace="20"
      alt="Support Vector Dynamics logo">
+</td>
+<td valign="middle">
 
 [![PyPI](https://img.shields.io/pypi/v/svdynamics.svg)](https://pypi.org/project/svdynamics/)
 [![Downloads](https://pepy.tech/badge/svdynamics)](https://pepy.tech/project/svdynamics)
@@ -22,7 +25,9 @@ yet complete.
 for both classification and regression, without requiring any changes to the
 underlying scikit-learn API.
 
-<br clear="left">
+</td>
+</tr>
+</table>
 
 ## Prerequisites
 
