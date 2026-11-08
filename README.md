@@ -1,5 +1,5 @@
 <img src="https://raw.githubusercontent.com/lshpaner/svdynamics/refs/heads/main/assets/svd_logo.svg"
-     height="250"
+     height="300"
      style="border: none; outline: none; box-shadow: none;"
      oncontextmenu="return false;">
 
