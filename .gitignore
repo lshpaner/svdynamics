@@ -55,13 +55,14 @@ pip-wheel-metadata/
 _build/
 
 
-# LUCY-SVM research CSV outputs
-lucy_svm_research/*.csv**/*.csv
-**/*.png
-**/*.jpg
-**/*.jpeg
-**/*.svg
-**/*.webp
-**/*.gif
-**/*.pdf
+# LUCY-SVM research outputs (CSVs and figures); scoped to the research
+# folder so tracked assets and docs figures elsewhere are not ignored
+lucy_svm_research/**/*.csv
+lucy_svm_research/**/*.png
+lucy_svm_research/**/*.jpg
+lucy_svm_research/**/*.jpeg
+lucy_svm_research/**/*.svg
+lucy_svm_research/**/*.webp
+lucy_svm_research/**/*.gif
+lucy_svm_research/**/*.pdf
 *.csv

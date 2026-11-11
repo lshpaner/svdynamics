@@ -1,4 +1,3 @@
-
 ################################################################################
 # GLOBALS
 ################################################################################
@@ -247,4 +246,4 @@ clean_dir:
 help:
 	@echo "$(PROJECT_NAME)"
 	@echo ""
-	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\\.PHONY/) desc=""}' $(MAKEFILE_LIST)
+	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\.PHONY/) desc=""}' $(MAKEFILE_LIST)
