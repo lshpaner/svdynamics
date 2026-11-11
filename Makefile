@@ -1,3 +1,4 @@
+
 ################################################################################
 # GLOBALS
 ################################################################################
@@ -109,7 +110,7 @@ run_sklearn_pipeline_gridsearch: | $(DATA_OUTPUT)
 
 ## Run custom kernel example
 .PHONY: run_custom_kernel
-run_custom_kernel: | $(DATA_OUTPUT)
+run_custom_kernel:
 	$(call run_example,custom_kernel)
 
 ## Run kernel PSD diagnostic example
@@ -146,9 +147,19 @@ research_lusi_baseline:
 research_lusi_cv:
 	cd $(RESEARCH_DIR) && $(PYTHON_INTERPRETER) lusi_cross_validation.py
 
+## Download, validate, and sample the MAGIC dataset
+.PHONY: research_magic_data
+research_magic_data:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/load_magic.py
+
+## Validate MAGIC kernel module import
+.PHONY: research_magic_kernels
+research_magic_kernels:
+	$(PYTHON_INTERPRETER) -c "import sys; sys.path.insert(0, '$(RESEARCH_DIR)'); import magic_kernels; print('MAGIC kernel module imported successfully')"
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv
+research_all: research_lusi_baseline research_lusi_cv research_magic_data
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
