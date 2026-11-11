@@ -191,9 +191,14 @@ research_magic_four_model:
 research_magic_adaptive:
 	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_adaptive.py
 
+## Benchmark actual svdynamics adaptive SVM on MAGIC
+.PHONY: research_magic_svm
+research_magic_svm:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_svm.py
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model research_magic_adaptive
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model research_magic_adaptive research_magic_svm
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
