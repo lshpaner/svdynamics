@@ -68,7 +68,6 @@ test_cov:
 $(DATA_OUTPUT):
 	mkdir -p $(DATA_OUTPUT)
 
-# Macro ensures errors from Python propagate through tee.
 define run_example
 	$(PYTHON_INTERPRETER) $(SCRIPT_DIR)/$(1).py 2>&1 | tee $(DATA_OUTPUT)/$(1).txt
 endef
@@ -182,9 +181,14 @@ research_magic_cv:
 research_magic_incremented:
 	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_incremented.py
 
+## Compare baseline KRR, LUSI, LUSIAdj, and incremented KRR
+.PHONY: research_magic_four_model
+research_magic_four_model:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_four_model.py
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
@@ -218,7 +222,7 @@ notebook_setup: install_nbstripout setup_nbstripout
 	@echo "Notebook Git integration configured."
 
 ################################################################################
-# DOCUMENTATION (run on the docs branch, which holds source/ and docs/)
+# DOCUMENTATION
 ################################################################################
 
 DOCS_SOURCE := source
@@ -235,7 +239,7 @@ docs_figures:
 		$(PYTHON_INTERPRETER) $(SCRIPT_DIR)/$$script.py --out-dir $(DOCS_STATIC) --dpi $(DOCS_FIG_DPI) || exit 1; \
 	done
 
-## Rebuild figures and the full HTML site into docs/ from scratch
+## Rebuild figures and the full HTML site into docs/
 .PHONY: docs_html
 docs_html: docs_figures
 	rm -rf $(DOCS_SOURCE)/_build
