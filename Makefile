@@ -171,9 +171,14 @@ research_magic_lusi:
 research_magic_tau:
 	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_tau_sensitivity.py
 
+## Run nested repeated stratified CV for MAGIC KRR vs LUSI
+.PHONY: research_magic_cv
+research_magic_cv:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_cross_validation.py
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
