@@ -53,3 +53,15 @@ Thumbs.db
 # Build artifacts
 pip-wheel-metadata/
 _build/
+
+
+# LUCY-SVM research CSV outputs
+lucy_svm_research/*.csv**/*.csv
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.svg
+**/*.webp
+**/*.gif
+**/*.pdf
+*.csv
