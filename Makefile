@@ -1,4 +1,3 @@
-
 ################################################################################
 # GLOBALS
 ################################################################################
@@ -110,7 +109,7 @@ run_sklearn_pipeline_gridsearch: | $(DATA_OUTPUT)
 
 ## Run custom kernel example
 .PHONY: run_custom_kernel
-run_custom_kernel:
+run_custom_kernel: | $(DATA_OUTPUT)
 	$(call run_example,custom_kernel)
 
 ## Run kernel PSD diagnostic example
@@ -157,9 +156,24 @@ research_magic_data:
 research_magic_kernels:
 	$(PYTHON_INTERPRETER) -c "import sys; sys.path.insert(0, '$(RESEARCH_DIR)'); import magic_kernels; print('MAGIC kernel module imported successfully')"
 
+## Run conventional two-feature MAGIC KRR baseline
+.PHONY: research_magic_krr
+research_magic_krr:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_benchmark.py
+
+## Compare MAGIC KRR against invariant-weighted LUSI
+.PHONY: research_magic_lusi
+research_magic_lusi:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_benchmark.py
+
+## Evaluate MAGIC LUSI sensitivity to invariant strength tau
+.PHONY: research_magic_tau
+research_magic_tau:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_tau_sensitivity.py
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
