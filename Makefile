@@ -1,3 +1,4 @@
+
 ################################################################################
 # GLOBALS
 ################################################################################
@@ -7,6 +8,7 @@ PYTHON_INTERPRETER ?= python3
 VENV_NAME := venv_svd
 SCRIPT_DIR := py_example_scripts
 DATA_OUTPUT := data_output
+RESEARCH_DIR := lucy_svm_research
 
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
@@ -17,6 +19,7 @@ HAS_CONDA := $(if $(shell command -v conda 2>/dev/null),True,False)
 ################################################################################
 # ENVIRONMENT
 ################################################################################
+
 ## Create the virtual environment
 .PHONY: venv
 venv:
@@ -47,6 +50,7 @@ venv_dep_setup_local: venv
 ################################################################################
 # TESTS
 ################################################################################
+
 ## Run unit tests
 .PHONY: test
 test:
@@ -60,6 +64,7 @@ test_cov:
 ################################################################################
 # EXAMPLE SCRIPTS
 ################################################################################
+
 $(DATA_OUTPUT):
 	mkdir -p $(DATA_OUTPUT)
 
@@ -129,8 +134,58 @@ run_all_py_example_scripts: run_core_py_example_scripts run_adaptive_kernel_comp
 	@echo "All scripts complete. Logs in $(DATA_OUTPUT)/"
 
 ################################################################################
+# RESEARCH: LUCY-SVM
+################################################################################
+
+## Run LUSI baseline experiment
+.PHONY: research_lusi_baseline
+research_lusi_baseline:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_baseline.py
+
+## Run repeated stratified CV for LUSI vs KRR
+.PHONY: research_lusi_cv
+research_lusi_cv:
+	cd $(RESEARCH_DIR) && $(PYTHON_INTERPRETER) lusi_cross_validation.py
+
+## Run all LUCY-SVM research experiments
+.PHONY: research_all
+research_all: research_lusi_baseline research_lusi_cv
+	@echo "LUCY-SVM research experiments complete."
+
+################################################################################
+# NOTEBOOK CLEANUP AND GIT INTEGRATION
+################################################################################
+
+## Install nbstripout in the active Python environment
+.PHONY: install_nbstripout
+install_nbstripout:
+	$(PYTHON_INTERPRETER) -m pip install nbstripout
+
+## Configure nbstripout Git filter for all notebooks
+.PHONY: setup_nbstripout
+setup_nbstripout:
+	nbstripout --install --attributes .gitattributes
+	@echo "nbstripout Git filter installed."
+
+## Strip outputs and execution counts from all notebooks
+.PHONY: strip_notebooks
+strip_notebooks:
+	@find . -type f -name '*.ipynb' \
+		-not -path './.git/*' \
+		-not -path '*/.ipynb_checkpoints/*' \
+		-not -path '*/site-packages/*' \
+		-exec nbstripout {} +
+	@echo "Notebook outputs stripped."
+
+## Install and configure nbstripout
+.PHONY: notebook_setup
+notebook_setup: install_nbstripout setup_nbstripout
+	@echo "Notebook Git integration configured."
+
+################################################################################
 # DOCUMENTATION (run on the docs branch, which holds source/ and docs/)
 ################################################################################
+
 DOCS_SOURCE := source
 DOCS_STATIC := $(DOCS_SOURCE)/_static
 DOCS_OUTPUT := docs
@@ -160,6 +215,7 @@ docs_html: docs_figures
 ################################################################################
 # BUILD AND RELEASE
 ################################################################################
+
 ## Remove build artifacts
 .PHONY: clean_build
 clean_build:
@@ -185,9 +241,10 @@ clean_dir:
 ################################################################################
 # HELP
 ################################################################################
+
 ## Show this help
 .PHONY: help
 help:
 	@echo "$(PROJECT_NAME)"
 	@echo ""
-	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\.PHONY/) desc=""}' $(MAKEFILE_LIST)
+	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\\.PHONY/) desc=""}' $(MAKEFILE_LIST)
