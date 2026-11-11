@@ -41,7 +41,7 @@ underlying scikit-learn API.
 PyPI: https://pypi.org/project/svdynamics/
 Documentation: https://lshpaner.github.io/svdynamics/
 
-Version: 0.0.1a2
+Version: 0.0.1a3
 """
 
 
@@ -49,7 +49,7 @@ Version: 0.0.1a2
 __doc__ = detailed_doc
 
 
-__version__ = "0.0.1a2"
+__version__ = "0.0.1a3"
 __author__ = "Leonid Shpaner"
 __email__ = "lshpaner@ucla.edu"
 

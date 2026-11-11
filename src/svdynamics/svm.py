@@ -7,34 +7,17 @@ from typing import Any, Dict, Optional, Union
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from sklearn.svm import SVC, SVR
+from sklearn.utils.validation import check_is_fitted
 
-from .kernels import (
-    AdaptiveCompositeKernel,
-    CompositeKernel,
-)
+from .kernels import AdaptiveCompositeKernel, CompositeKernel
 
 
-KernelArg = Union[
-    str,
-    CompositeKernel,
-    Any,
-]
+KernelArg = Union[str, CompositeKernel, Any]
 
 
 @dataclass
 class SVDClassifier(BaseEstimator, ClassifierMixin):
-    """
-    Thin wrapper around sklearn.svm.SVC with support for composite
-    and adaptive composite kernels.
-
-    If kernel is an AdaptiveCompositeKernel, its weights are learned
-    from the training data before fitting the SVC.
-
-    If kernel is a CompositeKernel, the estimator uses its callable
-    kernel representation.
-
-    Otherwise, the kernel is passed directly to sklearn.svm.SVC.
-    """
+    """SVC wrapper supporting fixed and adaptive composite kernels."""
 
     C: float = 1.0
     kernel: KernelArg = "rbf"
@@ -52,47 +35,23 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
     break_ties: bool = False
     random_state: Optional[int] = None
 
-    def fit(
-        self,
-        X: np.ndarray,
-        y: np.ndarray,
-    ) -> "SVDClassifier":
-        """
-        Fit the support vector classifier.
+    def __sklearn_is_fitted__(self) -> bool:
+        return hasattr(self, "_model")
 
-        Adaptive composite kernels learn their weights from the
-        training data before the underlying SVC is fitted.
-        """
-
-        # Fit a copy so the user's kernel (an init parameter) is never
-        # modified; the fitted kernel is exposed as kernel_.
-        if isinstance(
-            self.kernel,
-            CompositeKernel,
-        ):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "SVDClassifier":
+        if isinstance(self.kernel, CompositeKernel):
             kernel = copy.deepcopy(self.kernel)
-
-            if isinstance(
-                kernel,
-                AdaptiveCompositeKernel,
-            ):
-                # Learns weights and stores training-time scales.
-                kernel.fit(
-                    X,
-                    y,
-                )
+            if isinstance(kernel, AdaptiveCompositeKernel):
+                kernel.fit(X, y)
             else:
-                # Fix normalization to the training data so predictions
-                # do not depend on the prediction batch.
                 kernel.fit_scales(X)
-
-            self.kernel_ = kernel
+            fitted_kernel = kernel
             k = kernel.as_callable()
         else:
-            self.kernel_ = self.kernel
+            fitted_kernel = self.kernel
             k = self.kernel
 
-        self._model = SVC(
+        model = SVC(
             C=self.C,
             kernel=k,
             degree=self.degree,
@@ -109,77 +68,70 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
             break_ties=self.break_ties,
             random_state=self.random_state,
         )
-
-        self._model.fit(
-            X,
-            y,
-        )
-
-        # Expose sklearn-required fitted attributes.
-        self.classes_ = self._model.classes_
-
-        # Useful for sklearn tooling.
-        if hasattr(
-            self._model,
-            "n_features_in_",
-        ):
-            self.n_features_in_ = self._model.n_features_in_
-
+        model.fit(X, y)
+        self.kernel_ = fitted_kernel
+        self._model = model
+        self.classes_ = model.classes_
+        # SVC/SVR gained n_iter_ in scikit-learn 1.1; the package supports 1.0+.
+        if hasattr(model, "n_iter_"):
+            self.n_iter_ = model.n_iter_
+        if hasattr(model, "n_features_in_"):
+            self.n_features_in_ = model.n_features_in_
         return self
 
-    def predict(
-        self,
-        X: np.ndarray,
-    ) -> np.ndarray:
-        """Predict class labels."""
-
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self)
         return self._model.predict(X)
 
-    def decision_function(
-        self,
-        X: np.ndarray,
-    ) -> np.ndarray:
-        """Evaluate the decision function."""
-
+    def decision_function(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self)
         return self._model.decision_function(X)
 
-    def predict_proba(
-        self,
-        X: np.ndarray,
-    ) -> np.ndarray:
-        """Predict class probabilities when probability=True."""
-
-        if not getattr(
-            self._model,
-            "probability",
-            False,
-        ):
+    @property
+    def predict_proba(self):
+        """Available only when probability estimation is enabled."""
+        if not self.probability:
             raise AttributeError(
-                "predict_proba is only available when "
-                "probability=True"
+                "predict_proba is only available when probability=True"
             )
+        return self._predict_proba
 
+    def _predict_proba(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self)
         return self._model.predict_proba(X)
 
     @property
-    def support_vectors_(self) -> np.ndarray:
-        """Return support vectors."""
+    def predict_log_proba(self):
+        """Available only when probability estimation is enabled."""
+        if not self.probability:
+            raise AttributeError(
+                "predict_log_proba is only available when probability=True"
+            )
+        return self._predict_log_proba
 
+    def _predict_log_proba(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self)
+        return self._model.predict_log_proba(X)
+
+    @property
+    def support_(self) -> np.ndarray:
+        check_is_fitted(self)
+        return self._model.support_
+
+    @property
+    def support_vectors_(self) -> np.ndarray:
+        check_is_fitted(self)
         return self._model.support_vectors_
 
     @property
     def n_support_(self) -> np.ndarray:
-        """Return the number of support vectors for each class."""
-
+        check_is_fitted(self)
         return self._model.n_support_
 
 
 @dataclass
 class SVDRegressor(BaseEstimator, RegressorMixin):
-    """
-    Thin wrapper around sklearn.svm.SVR with support for
-    CompositeKernel.
-    """
+    """SVR wrapper supporting fixed composite kernels."""
 
     C: float = 1.0
     kernel: KernelArg = "rbf"
@@ -193,37 +145,27 @@ class SVDRegressor(BaseEstimator, RegressorMixin):
     verbose: bool = False
     max_iter: int = -1
 
-    def fit(
-        self,
-        X: np.ndarray,
-        y: np.ndarray,
-    ) -> "SVDRegressor":
-        """Fit the support vector regressor."""
+    def __sklearn_is_fitted__(self) -> bool:
+        return hasattr(self, "_model")
 
-        if isinstance(
-            self.kernel,
-            AdaptiveCompositeKernel,
-        ):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "SVDRegressor":
+        if isinstance(self.kernel, AdaptiveCompositeKernel):
             raise TypeError(
                 "AdaptiveCompositeKernel learns weights from binary class "
                 "labels and is not supported for regression; use "
                 "CompositeKernel with fixed weights."
             )
 
-        # Fit a copy so the user's kernel is never modified.
-        if isinstance(
-            self.kernel,
-            CompositeKernel,
-        ):
+        if isinstance(self.kernel, CompositeKernel):
             kernel = copy.deepcopy(self.kernel)
             kernel.fit_scales(X)
-            self.kernel_ = kernel
+            fitted_kernel = kernel
             k = kernel.as_callable()
         else:
-            self.kernel_ = self.kernel
+            fitted_kernel = self.kernel
             k = self.kernel
 
-        self._model = SVR(
+        model = SVR(
             C=self.C,
             kernel=k,
             degree=self.degree,
@@ -236,24 +178,31 @@ class SVDRegressor(BaseEstimator, RegressorMixin):
             verbose=self.verbose,
             max_iter=self.max_iter,
         )
-
-        self._model.fit(
-            X,
-            y,
-        )
-
+        model.fit(X, y)
+        self.kernel_ = fitted_kernel
+        self._model = model
+        # SVC/SVR gained n_iter_ in scikit-learn 1.1; the package supports 1.0+.
+        if hasattr(model, "n_iter_"):
+            self.n_iter_ = model.n_iter_
+        if hasattr(model, "n_features_in_"):
+            self.n_features_in_ = model.n_features_in_
         return self
 
-    def predict(
-        self,
-        X: np.ndarray,
-    ) -> np.ndarray:
-        """Predict continuous target values."""
-
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self)
         return self._model.predict(X)
 
     @property
     def support_(self) -> np.ndarray:
-        """Return indices of support vectors."""
-
+        check_is_fitted(self)
         return self._model.support_
+
+    @property
+    def support_vectors_(self) -> np.ndarray:
+        check_is_fitted(self)
+        return self._model.support_vectors_
+
+    @property
+    def n_support_(self) -> np.ndarray:
+        check_is_fitted(self)
+        return self._model.n_support_
