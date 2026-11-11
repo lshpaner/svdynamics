@@ -1,3 +1,4 @@
+
 ################################################################################
 # GLOBALS
 ################################################################################
@@ -176,9 +177,14 @@ research_magic_tau:
 research_magic_cv:
 	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_cross_validation.py
 
+## Compare MAGIC KRR with unrestricted additive incremented-kernel KRR
+.PHONY: research_magic_incremented
+research_magic_incremented:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_incremented.py
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
