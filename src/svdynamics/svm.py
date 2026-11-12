@@ -75,8 +75,12 @@ class SVDClassifier(BaseEstimator, ClassifierMixin):
         # SVC/SVR gained n_iter_ in scikit-learn 1.1; the package supports 1.0+.
         if hasattr(model, "n_iter_"):
             self.n_iter_ = model.n_iter_
+        # SVC/SVR skip n_features_in_ when the kernel is a callable
+        # (every composite kernel), so fall back to the input's width.
         if hasattr(model, "n_features_in_"):
             self.n_features_in_ = model.n_features_in_
+        else:
+            self.n_features_in_ = np.asarray(X).shape[1]
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -184,8 +188,12 @@ class SVDRegressor(BaseEstimator, RegressorMixin):
         # SVC/SVR gained n_iter_ in scikit-learn 1.1; the package supports 1.0+.
         if hasattr(model, "n_iter_"):
             self.n_iter_ = model.n_iter_
+        # SVC/SVR skip n_features_in_ when the kernel is a callable
+        # (every composite kernel), so fall back to the input's width.
         if hasattr(model, "n_features_in_"):
             self.n_features_in_ = model.n_features_in_
+        else:
+            self.n_features_in_ = np.asarray(X).shape[1]
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:

@@ -231,9 +231,21 @@ research_continuous_mkl:
 	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_continuous_mkl.py
 
 
+## Prototype dual-objective multiple-kernel learning on Moons
+.PHONY: research_simple_mkl
+research_simple_mkl:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_simple_mkl.py
+
+
+## Final matched comparison of five SVM kernel-learning methods
+.PHONY: research_final_mkl
+research_final_mkl:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_final_mkl_benchmark.py
+
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model research_magic_adaptive research_magic_svm research_magic_weight_search research_multidataset research_multidataset_ablation research_objective_comparison research_rbf_comparison research_controlled_kernel research_continuous_mkl
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model research_magic_adaptive research_magic_svm research_magic_weight_search research_multidataset research_multidataset_ablation research_objective_comparison research_rbf_comparison research_controlled_kernel research_continuous_mkl research_final_mkl
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
