@@ -19,7 +19,6 @@ HAS_CONDA := $(if $(shell command -v conda 2>/dev/null),True,False)
 ################################################################################
 # ENVIRONMENT
 ################################################################################
-
 ## Create the virtual environment
 .PHONY: venv
 venv:
@@ -50,7 +49,6 @@ venv_dep_setup_local: venv
 ################################################################################
 # TESTS
 ################################################################################
-
 ## Run unit tests
 .PHONY: test
 test:
@@ -64,11 +62,9 @@ test_cov:
 ################################################################################
 # EXAMPLE SCRIPTS
 ################################################################################
-
 $(DATA_OUTPUT):
 	mkdir -p $(DATA_OUTPUT)
 
-# Macro ensures errors from Python propagate through tee.
 define run_example
 	$(PYTHON_INTERPRETER) $(SCRIPT_DIR)/$(1).py 2>&1 | tee $(DATA_OUTPUT)/$(1).txt
 endef
@@ -136,7 +132,6 @@ run_all_py_example_scripts: run_core_py_example_scripts run_adaptive_kernel_comp
 ################################################################################
 # RESEARCH: LUCY-SVM
 ################################################################################
-
 ## Run LUSI baseline experiment
 .PHONY: research_lusi_baseline
 research_lusi_baseline:
@@ -147,15 +142,115 @@ research_lusi_baseline:
 research_lusi_cv:
 	cd $(RESEARCH_DIR) && $(PYTHON_INTERPRETER) lusi_cross_validation.py
 
+## Download, validate, and sample the MAGIC dataset
+.PHONY: research_magic_data
+research_magic_data:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/load_magic.py
+
+## Validate MAGIC kernel module import
+.PHONY: research_magic_kernels
+research_magic_kernels:
+	$(PYTHON_INTERPRETER) -c "import sys; sys.path.insert(0, '$(RESEARCH_DIR)'); import magic_kernels; print('MAGIC kernel module imported successfully')"
+
+## Run conventional two-feature MAGIC KRR baseline
+.PHONY: research_magic_krr
+research_magic_krr:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_benchmark.py
+
+## Compare MAGIC KRR against invariant-weighted LUSI
+.PHONY: research_magic_lusi
+research_magic_lusi:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_benchmark.py
+
+## Evaluate MAGIC LUSI sensitivity to invariant strength tau
+.PHONY: research_magic_tau
+research_magic_tau:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_tau_sensitivity.py
+
+## Run nested repeated stratified CV for MAGIC KRR vs LUSI
+.PHONY: research_magic_cv
+research_magic_cv:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_cross_validation.py
+
+## Compare MAGIC KRR with unrestricted additive incremented-kernel KRR
+.PHONY: research_magic_incremented
+research_magic_incremented:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_incremented.py
+
+## Compare baseline KRR, LUSI, LUSIAdj, and incremented KRR
+.PHONY: research_magic_four_model
+research_magic_four_model:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_four_model.py
+
+## Compare equal-weight and nested-tuned additive MAGIC kernels
+.PHONY: research_magic_adaptive
+research_magic_adaptive:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_adaptive.py
+
+## Benchmark actual svdynamics adaptive SVM on MAGIC
+.PHONY: research_magic_svm
+research_magic_svm:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_svm.py
+
+## Run nested CV weight and C search for composite SVM
+.PHONY: research_magic_weight_search
+research_magic_weight_search:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_magic_weight_search.py
+
+## Run nested multi-dataset composite SVM benchmark
+.PHONY: research_multidataset
+research_multidataset:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_multidataset_benchmark.py
+
+## Run nested multi-dataset SVM C and kernel-weight ablation
+.PHONY: research_multidataset_ablation
+research_multidataset_ablation:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_multidataset_ablation.py
+
+## Compare ROC-AUC, balanced accuracy, and hybrid selection objectives
+.PHONY: research_objective_comparison
+research_objective_comparison:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_objective_comparison.py
+
+
+## Compare hybrid composite SVM against tuned conventional RBF SVC
+.PHONY: research_rbf_comparison
+research_rbf_comparison:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_rbf_comparison.py
+
+
+## Compare RBF, equal composite, and adaptive composite with tuned C/gamma
+.PHONY: research_controlled_kernel
+research_controlled_kernel:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_controlled_kernel_comparison.py
+
+
+## Compare continuous kernel-weight optimization against existing methods
+.PHONY: research_continuous_mkl
+research_continuous_mkl:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_continuous_mkl.py
+
+
+## Prototype dual-objective multiple-kernel learning on Moons
+.PHONY: research_simple_mkl
+research_simple_mkl:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_simple_mkl.py
+
+
+## Final matched comparison of five SVM kernel-learning methods
+.PHONY: research_final_mkl
+research_final_mkl:
+	$(PYTHON_INTERPRETER) $(RESEARCH_DIR)/lusi_final_mkl_benchmark.py
+
+
 ## Run all LUCY-SVM research experiments
 .PHONY: research_all
-research_all: research_lusi_baseline research_lusi_cv
+research_all: research_lusi_baseline research_lusi_cv research_magic_data research_magic_lusi research_magic_tau research_magic_cv research_magic_incremented research_magic_four_model research_magic_adaptive research_magic_svm research_magic_weight_search research_multidataset research_multidataset_ablation research_objective_comparison research_rbf_comparison research_controlled_kernel research_continuous_mkl research_final_mkl
 	@echo "LUCY-SVM research experiments complete."
 
 ################################################################################
 # NOTEBOOK CLEANUP AND GIT INTEGRATION
 ################################################################################
-
 ## Install nbstripout in the active Python environment
 .PHONY: install_nbstripout
 install_nbstripout:
@@ -183,9 +278,8 @@ notebook_setup: install_nbstripout setup_nbstripout
 	@echo "Notebook Git integration configured."
 
 ################################################################################
-# DOCUMENTATION (run on the docs branch, which holds source/ and docs/)
+# DOCUMENTATION
 ################################################################################
-
 DOCS_SOURCE := source
 DOCS_STATIC := $(DOCS_SOURCE)/_static
 DOCS_OUTPUT := docs
@@ -200,7 +294,7 @@ docs_figures:
 		$(PYTHON_INTERPRETER) $(SCRIPT_DIR)/$$script.py --out-dir $(DOCS_STATIC) --dpi $(DOCS_FIG_DPI) || exit 1; \
 	done
 
-## Rebuild figures and the full HTML site into docs/ from scratch
+## Rebuild figures and the full HTML site into docs/
 .PHONY: docs_html
 docs_html: docs_figures
 	rm -rf $(DOCS_SOURCE)/_build
@@ -215,7 +309,6 @@ docs_html: docs_figures
 ################################################################################
 # BUILD AND RELEASE
 ################################################################################
-
 ## Remove build artifacts
 .PHONY: clean_build
 clean_build:
@@ -241,10 +334,9 @@ clean_dir:
 ################################################################################
 # HELP
 ################################################################################
-
 ## Show this help
 .PHONY: help
 help:
 	@echo "$(PROJECT_NAME)"
 	@echo ""
-	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\\.PHONY/) desc=""}' $(MAKEFILE_LIST)
+	@awk '/^## /{desc=substr($$0,4); next} /^[a-zA-Z0-9_]+:/{ if (desc) {split($$0,t,":"); printf "  \033[36m%-34s\033[0m %s\n",t[1],desc}; desc=""} !/^## /{if ($$0 !~ /^\.PHONY/) desc=""}' $(MAKEFILE_LIST)
