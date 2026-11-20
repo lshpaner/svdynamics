@@ -58,7 +58,7 @@ def test_domain_weights_no_penalty_follow_positive_alignment():
 
 def test_domain_weights_penalize_high_discrepancy():
     weights = domain_adaptive_weights([0.6, 0.6], [0.0, 2.0], penalty=0.3)
-    np.testing.assert_allclose(weights, [2.0 / 3.0, 1.0 / 3.0])
+    np.testing.assert_allclose(weights, [1.3 / 2.3, 1.0 / 2.3])
 
 
 def test_domain_weights_zero_discrepancy():
@@ -86,3 +86,16 @@ def test_domain_weights_uniform_fallback():
 def test_domain_weights_invalid_inputs(alignments, discrepancies, penalty, message):
     with pytest.raises(ValueError, match=message):
         domain_adaptive_weights(alignments, discrepancies, penalty=penalty)
+
+
+
+def test_domain_weights_large_penalty_preserves_positive_alignment():
+    weights = domain_adaptive_weights(
+        [0.26023205, 0.15589277, 0.14729820],
+        [0.03048483, 0.02348753, 0.01422274],
+        penalty=0.5,
+    )
+    assert np.all(weights > 0)
+    assert weights[0] > weights[1]
+    assert not np.allclose(weights, np.full(3, 1.0 / 3.0))
+    assert weights.sum() == pytest.approx(1.0)
