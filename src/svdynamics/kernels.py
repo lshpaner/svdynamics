@@ -608,3 +608,61 @@ class AdaptiveCompositeKernel(CompositeKernel):
         self.fit_scales(X)
 
         return self
+
+
+@dataclass
+class DomainAdaptiveCompositeKernel(CompositeKernel):
+    """Composite kernel with domain-penalized training-only weights.
+
+    This experimental heuristic balances kernel-target alignment against
+    relative squared MMD between two training domains. It does not
+    guarantee domain invariance or out-of-domain generalization.
+
+    Fit this kernel explicitly with X, binary y, and two-domain labels
+    before using it as a callable. SVDClassifier does not yet provide
+    a domain-label interface.
+    """
+
+    penalty: float = 0.5
+
+    def fit(
+        self,
+        X: np.ndarray,
+        y: np.ndarray,
+        domains: np.ndarray,
+    ) -> "DomainAdaptiveCompositeKernel":
+        """Learn weights from training features, targets, and domains."""
+        from .domain import domain_adaptive_weights, kernel_domain_discrepancy
+
+        X = np.asarray(X)
+        y = _binary_targets(y)
+        domains = np.asarray(domains).ravel()
+
+        if X.ndim != 2:
+            raise ValueError("X must be a two-dimensional array")
+        if X.shape[0] != y.shape[0] or X.shape[0] != domains.shape[0]:
+            raise ValueError("X, y, and domains must contain the same number of samples")
+
+        # Establish training-only scales before evaluating discrepancies.
+        self.fit_scales(X)
+        kernel_matrices = [
+            _compute_kernel(pk, X, X) / scale
+            for pk, scale in zip(self._parsed, self.scales_)
+        ]
+        alignments = np.asarray(
+            [_kernel_target_alignment(K, y, eps=self.eps) for K in kernel_matrices],
+            dtype=float,
+        )
+        discrepancies = np.asarray(
+            [kernel_domain_discrepancy(K, domains) for K in kernel_matrices],
+            dtype=float,
+        )
+        weights = domain_adaptive_weights(
+            alignments, discrepancies, penalty=self.penalty, eps=self.eps
+        )
+
+        self.alignments_ = alignments
+        self.discrepancies_ = discrepancies
+        self._weights = weights
+        self.weights_ = weights.copy()
+        return self
