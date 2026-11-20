@@ -54,3 +54,53 @@ def kernel_domain_discrepancy(K: np.ndarray, domains: np.ndarray) -> float:
         - 2.0 * K[np.ix_(a, b)].mean()
     )
     return float(max(0.0, mmd2))
+
+
+
+def domain_adaptive_weights(
+    alignments: np.ndarray,
+    discrepancies: np.ndarray,
+    penalty: float = 0.5,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    """Compute nonnegative kernel weights with a domain-discrepancy penalty.
+
+    Positive target alignments are rewarded. Nonnegative squared-MMD
+    discrepancies are divided by the maximum discrepancy across the
+    candidate kernels, placing the largest observed discrepancy at 1.
+    This relative scaling depends on the candidate kernel set.
+
+    Scores are max(0, alignment - penalty * relative_discrepancy),
+    normalized to sum to one. If all scores vanish, uniform weights
+    are returned. This heuristic is not a guarantee of domain invariance.
+    """
+    alignments = np.asarray(alignments, dtype=float)
+    discrepancies = np.asarray(discrepancies, dtype=float)
+
+    if (
+        alignments.ndim != 1
+        or discrepancies.ndim != 1
+        or alignments.size == 0
+        or alignments.shape != discrepancies.shape
+    ):
+        raise ValueError("alignments and discrepancies must be nonempty matching 1D arrays")
+    if not np.all(np.isfinite(alignments)) or not np.all(np.isfinite(discrepancies)):
+        raise ValueError("alignments and discrepancies must be finite")
+    if np.any(discrepancies < 0):
+        raise ValueError("discrepancies must be nonnegative")
+    if not np.isfinite(penalty) or penalty < 0:
+        raise ValueError("penalty must be finite and nonnegative")
+    if not np.isfinite(eps) or eps <= 0:
+        raise ValueError("eps must be finite and positive")
+
+    max_discrepancy = float(np.max(discrepancies))
+    relative_discrepancy = (
+        discrepancies / max_discrepancy
+        if max_discrepancy > eps
+        else np.zeros_like(discrepancies)
+    )
+    scores = np.maximum(0.0, alignments - penalty * relative_discrepancy)
+    total = float(scores.sum())
+    if total <= eps:
+        return np.full(alignments.size, 1.0 / alignments.size)
+    return scores / total
