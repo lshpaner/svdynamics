@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from svdynamics.domain import kernel_domain_discrepancy
+from svdynamics.domain import domain_adaptive_weights, kernel_domain_discrepancy
 
 
 def test_identical_feature_means_have_zero_linear_mmd():
@@ -48,3 +48,41 @@ def test_domain_label_permutation_invariant():
 def test_invalid_inputs(K, domains, message):
     with pytest.raises(ValueError, match=message):
         kernel_domain_discrepancy(K, domains)
+
+
+
+def test_domain_weights_no_penalty_follow_positive_alignment():
+    weights = domain_adaptive_weights([0.2, 0.6], [1.0, 3.0], penalty=0.0)
+    np.testing.assert_allclose(weights, [0.25, 0.75])
+
+
+def test_domain_weights_penalize_high_discrepancy():
+    weights = domain_adaptive_weights([0.6, 0.6], [0.0, 2.0], penalty=0.3)
+    np.testing.assert_allclose(weights, [2.0 / 3.0, 1.0 / 3.0])
+
+
+def test_domain_weights_zero_discrepancy():
+    weights = domain_adaptive_weights([0.2, 0.8], [0.0, 0.0])
+    np.testing.assert_allclose(weights, [0.2, 0.8])
+
+
+def test_domain_weights_uniform_fallback():
+    weights = domain_adaptive_weights([0.1, 0.1], [1.0, 1.0], penalty=1.0)
+    np.testing.assert_allclose(weights, [0.5, 0.5])
+
+
+@pytest.mark.parametrize(
+    "alignments, discrepancies, penalty, message",
+    [
+        ([], [], 0.5, "nonempty"),
+        ([0.2], [0.1, 0.2], 0.5, "matching"),
+        ([[0.2]], [[0.1]], 0.5, "1D"),
+        ([np.nan], [0.1], 0.5, "finite"),
+        ([0.2], [-0.1], 0.5, "nonnegative"),
+        ([0.2], [0.1], -1.0, "nonnegative"),
+        ([0.2], [0.1], np.inf, "finite"),
+    ],
+)
+def test_domain_weights_invalid_inputs(alignments, discrepancies, penalty, message):
+    with pytest.raises(ValueError, match=message):
+        domain_adaptive_weights(alignments, discrepancies, penalty=penalty)
