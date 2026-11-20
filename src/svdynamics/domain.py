@@ -70,9 +70,9 @@ def domain_adaptive_weights(
     candidate kernels, placing the largest observed discrepancy at 1.
     This relative scaling depends on the candidate kernel set.
 
-    Scores are max(0, alignment - penalty * relative_discrepancy),
-    normalized to sum to one. If all scores vanish, uniform weights
-    are returned. This heuristic is not a guarantee of domain invariance.
+    Scores are max(0, alignment) / (1 + penalty * relative_discrepancy),
+    normalized to sum to one. If all alignments are nonpositive, uniform
+    weights are returned. This heuristic is not a guarantee of domain invariance.
     """
     alignments = np.asarray(alignments, dtype=float)
     discrepancies = np.asarray(discrepancies, dtype=float)
@@ -99,7 +99,11 @@ def domain_adaptive_weights(
         if max_discrepancy > eps
         else np.zeros_like(discrepancies)
     )
-    scores = np.maximum(0.0, alignments - penalty * relative_discrepancy)
+    # Multiplicative shrinkage preserves positive alignment scores even
+    # when the penalty is large, avoiding all-zero scores from subtraction.
+    scores = np.maximum(0.0, alignments) / (
+        1.0 + penalty * relative_discrepancy
+    )
     total = float(scores.sum())
     if total <= eps:
         return np.full(alignments.size, 1.0 / alignments.size)
